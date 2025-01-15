@@ -6,20 +6,25 @@
 <body>
     <header>
         <!-- ユーザー名の表示 -->
-        <p th:if="${user_name != null}">
-            こんにちは、<span th:text="${user_name}"></span> さん
-        </p>
-        <p th:if="${user_name == null}">
-            ゲストとして閲覧しています
-        </p>
+        <nav>
+            <div>
+                <!-- セッションからユーザー名を表示 -->
+                <span th:if="${session.user_name != null}">
+                    ようこそ、<span th:text="${session.user_name}"></span> さん
+                </span>
+                <span th:if="${session.user_name == null}">
+                    ゲストとしてログインしています
+                </span>
+            </div>
+        </nav>
 
         <!-- ナビゲーションメニュー -->
         <nav>
             <a th:href="@{/products/search?keyword}">商品一覧</a>
-            <a th:href="@{/mypage}" th:if="${user_name != null}">マイページ</a>
-            <a th:href="@{/login}" th:if="${user_name == null}">ログイン</a>
-            <a th:href="@{/register}" th:if="${user_name == null}">新規登録</a>
-            <a th:href="@{/logout}" th:if="${user_name != null}">ログアウト</a>
+            <a th:href="@{/mypage}" th:if="${session.user_name != null}">マイページ</a>
+            <a th:href="@{/login}" th:if="${session.user_name == null}">ログイン</a>
+            <a th:href="@{/register}" th:if="${session.user_name == null}">新規登録</a>
+            <a th:href="@{/logout}" th:if="${session.user_name != null}">ログアウト</a>
         </nav>
 
         <!-- 商品検索フォーム -->
