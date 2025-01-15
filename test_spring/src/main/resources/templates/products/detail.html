@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品詳細</title>
+    <script>
+        // カートに追加後のメッセージ表示
+        function addToCart() {
+            alert("カートに追加しました");
+        }
+    </script>
+</head>
+<body>
+	<th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <h1>商品詳細</h1>
+
+    <!-- 商品情報表示 -->
+    <div>
+        <h2 th:text="${product.productName}">商品名が表示されます</h2>
+        <p>価格: <span th:text="${product.price}"></span>円</p>
+        <p>税抜き価格: <span th:text="${product.taxPrice}"></span>円</p>
+        <p>在庫: <span th:text="${product.stock}"></span>個</p>
+        <p>コメント: <span th:text="${product.comment}"></span></p>
+        <img th:src="@{${product.imgPath}}" th:alt="${product.productName}" style="width: 300px; height: auto;">
+
+        <p><a th:href="@{/products}">商品一覧</a></p>
+    </div>
+
+    <!-- 購入とカートボタン -->
+    <div>
+        <button th:onclick="|location.href='/products/detail/' + ${product.productId} + '/purchase'|">単品購入</button>
+        <button onclick="addToCart()">カートに追加</button>
+    </div>
+
+    <!-- 口コミ情報の表示 -->
+    <div>
+        <h2>口コミ投稿日時</h2>
+        <div th:if="${reviews != null and !#lists.isEmpty(reviews)}">
+            <ul>
+                <li th:each="review : ${reviews}">
+                    <strong th:text="${review.dummyUserName}">ユーザー名</strong>
+                    <p>投稿日: <span th:text="${#temporals.format(review.createdDate, 'yyyy-MM-dd')}"></span></p>
+                    <p>コメント: <span th:text="${review.comment}"></span></p>
+                    <p>評価:
+                        <span th:each="star : ${#numbers.sequence(1, 5)}">
+                            <span th:text="${star <= review.rating ? '★' : '☆'}"></span>
+                        </span>
+                    </p>
+                    <hr>
+                </li>
+            </ul>
+        </div>
+        <p th:if="${reviews == null or #lists.isEmpty(reviews)}">口コミはありません</p>
+    </div>
+	<a th:href="@{/products/{productId}/reviews/new(productId=${product.productId})}">口コミを投稿</a>
+</body>
+</html>

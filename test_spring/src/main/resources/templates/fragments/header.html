@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>共通ヘッダー</title>
+</head>
+<body>
+    <header>
+        <!-- ユーザー名の表示 -->
+        <p th:if="${user_name != null}">
+            こんにちは、<span th:text="${user_name}"></span> さん
+        </p>
+        <p th:if="${user_name == null}">
+            ゲストとして閲覧しています
+        </p>
+
+        <!-- ナビゲーションメニュー -->
+        <nav>
+            <a th:href="@{/products/search?keyword}">商品一覧</a>
+            <a th:href="@{/mypage}" th:if="${user_name != null}">マイページ</a>
+            <a th:href="@{/login}" th:if="${user_name == null}">ログイン</a>
+            <a th:href="@{/register}" th:if="${user_name == null}">新規登録</a>
+            <a th:href="@{/logout}" th:if="${user_name != null}">ログアウト</a>
+        </nav>
+
+        <!-- 商品検索フォーム -->
+        <form th:action="@{/products/search}" method="get" style="margin-top: 10px;">
+            <input type="text" name="keyword" placeholder="商品を検索" required>
+            <button type="submit">検索</button>
+        </form>
+
+        <!-- カテゴリーの表示 -->
+        <div>
+            <h3>カテゴリー</h3>
+            <ul>
+                <li th:each="category : ${categories}">
+                    <a th:href="@{/products/category/{id}(id=${category.categoryId})}" 
+                       th:text="${category.categoryName}">カテゴリー名</a>
+                    <p th:text="${category.description}">カテゴリー説明</p>
+                </li>
+            </ul>
+        </div>
+    </header>
+</body>
+</html>
