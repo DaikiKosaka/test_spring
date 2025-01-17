@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品詳細</title>
     <script>
-        // カートに追加後のメッセージ表示
+        // カートに追加後のリダイレクト
         function addToCart() {
             alert("カートに追加しました");
+            // カートページにリダイレクト
+            window.location.href = '/cart';
         }
     </script>
 </head>
 <body>
-	<th:block th:replace="~{fragments/header :: header}"></th:block>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
 
     <h1>商品詳細</h1>
 
@@ -31,7 +33,9 @@
     <!-- 購入とカートボタン -->
     <div>
         <button th:onclick="|location.href='/products/detail/' + ${product.productId} + '/purchase'|">単品購入</button>
-        <button onclick="addToCart()">カートに追加</button>
+    <form action="/products/{product.id}/add-to-cart" method="post">
+        <button type="submit">カートに追加</button>
+    </form>
     </div>
 
     <!-- 口コミ情報の表示 -->
@@ -54,6 +58,6 @@
         </div>
         <p th:if="${reviews == null or #lists.isEmpty(reviews)}">口コミはありません</p>
     </div>
-	<a th:href="@{/products/{productId}/reviews/new(productId=${product.productId})}">口コミを投稿</a>
+    <a th:href="@{/products/{productId}/reviews/new(productId=${product.productId})}">口コミを投稿</a>
 </body>
 </html>

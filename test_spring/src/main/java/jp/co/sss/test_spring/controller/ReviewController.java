@@ -1,7 +1,9 @@
 package jp.co.sss.test_spring.controller;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,38 +43,37 @@ public class ReviewController {
                             @ModelAttribute Review review, 
                             @RequestParam("reviewImg") MultipartFile reviewImg, 
                             RedirectAttributes redirectAttributes,
-                            @AuthenticationPrincipal User user) throws IOException { // ログインユーザーを取得
+                            @AuthenticationPrincipal User user) throws IOException {
 
-        // 手動バリデーション（titleのバリデーションは削除）
-        if (review.getComment() == null || review.getComment().isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "内容は必須です。");
-            return "redirect:/products/" + productId + "/reviews/new";
-        }
-
-        if (review.getRating() < 1 || review.getRating() > 5) {
-            redirectAttributes.addFlashAttribute("error", "レーティングは1から5の間で指定してください。");
-            return "redirect:/products/" + productId + "/reviews/new";
-        }
-
-        // user_id を設定（ログインユーザーのIDを使用）
-        review.setUserId(user.getId());
+        // 他のバリデーションや処理...
 
         // 画像がアップロードされた場合の処理
         if (!reviewImg.isEmpty()) {
+            // 画像ファイル名を取得
             String fileName = reviewImg.getOriginalFilename();
-            String filePath = "C:/path/to/your/images/" + fileName; // 保存先パスを指定
-            reviewImg.transferTo(new File(filePath));  // ファイルを保存
-            review.setReviewImgPath(filePath);  // 画像パスを設定
+
+            // 保存先のパスを指定（アプリケーション外のユーザーディレクトリ）
+            String uploadDir = System.getProperty("user.home") + "/uploaded_images";
+            Path uploadPath = Paths.get(uploadDir);
+
+            // 保存先ディレクトリが存在しない場合は作成
+            Files.createDirectories(uploadPath);
+
+            // 画像を保存するファイルパスを作成
+            Path filePath = uploadPath.resolve(fileName);
+            
+            // ファイルを保存
+            reviewImg.transferTo(filePath.toFile());
+
+            // 画像パスをReviewに設定（相対パスを利用）
+            review.setReviewImgPath("/uploaded_images/" + fileName);
         }
 
         // 口コミを保存
         review.setProductId(productId);
         reviewService.saveReview(productId, review);
 
-        // 成功メッセージをリダイレクトに渡す
         redirectAttributes.addFlashAttribute("message", "口コミが投稿されました！");
-
-        // 商品詳細ページにリダイレクト
         return "redirect:/products/" + productId;
     }
 

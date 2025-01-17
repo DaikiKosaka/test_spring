@@ -75,4 +75,6 @@ public class ProductController {
         model.addAttribute("product", product);
         return "products/purchase";
     }
+    
+    
 }
