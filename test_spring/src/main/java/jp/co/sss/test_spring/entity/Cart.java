@@ -94,4 +94,10 @@ public class Cart {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // 商品と数量をカートに追加
+    public void addItem(Product product, int quantity) {
+        this.product = product;  // 商品を設定
+        this.quantity = quantity;  // 数量を設定
+    }
 }

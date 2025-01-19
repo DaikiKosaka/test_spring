@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カート確認画面</title>
+</head>
+<body>
+    <h1>カート確認</h1>
+
+    <div>
+        <h2>商品一覧</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>画像</th>
+                    <th>商品名</th>
+                    <th>個数</th>
+                    <th>価格</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cartProduct : ${cartProducts}">
+                    <td><img th:src="@{${cartProduct.product.imgPath}}" alt="商品画像" width="100"></td>
+                    <td th:text="${cartProduct.product.productName}"></td>
+                    <td th:text="${cartProduct.quantity}"></td>
+                    <td th:text="${cartProduct.product.price * cartProduct.quantity}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <p>カート内の合計: ¥<span th:text="${cartTotal}"></span></p>
+    </div>
+
+    <!-- ナビゲーションボタン -->
+    <div>
+        <button th:onclick="location.href='test_spring/purchase'">レジに進む</button>
+        <button th:onclick="location.href='/test_spring/cart_detail'">カートに移動</button>
+        <button th:onclick="|location.href='/test_spring/products'|">TOP画面に戻る</button>
+
+
+    </div>
+</body>
+</html>

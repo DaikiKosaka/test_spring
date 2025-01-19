@@ -33,9 +33,9 @@
     <!-- 購入とカートボタン -->
     <div>
         <button th:onclick="|location.href='/products/detail/' + ${product.productId} + '/purchase'|">単品購入</button>
-    <form action="/products/{product.id}/add-to-cart" method="post">
-        <button type="submit">カートに追加</button>
-    </form>
+        <form th:action="@{/products/{id}/add-to-cart(id=${product.productId})}" method="post" onsubmit="addToCart()">
+            <button type="submit">カートに追加</button>
+        </form>
     </div>
 
     <!-- 口コミ情報の表示 -->

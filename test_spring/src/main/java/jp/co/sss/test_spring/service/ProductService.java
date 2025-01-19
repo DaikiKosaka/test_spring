@@ -1,16 +1,16 @@
 package jp.co.sss.test_spring.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
+import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Cart;
 import jp.co.sss.test_spring.entity.Product;
 import jp.co.sss.test_spring.entity.Review;
-import jp.co.sss.test_spring.repository.CartRepository;
 import jp.co.sss.test_spring.repository.ProductRepository;
 import jp.co.sss.test_spring.repository.ReviewRepository;
 
@@ -19,13 +19,11 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ReviewRepository reviewRepository;
-    private final CartRepository cartRepository; // CartRepository を追加
 
-    // コンストラクタでリポジトリを注入
-    public ProductService(ProductRepository productRepository, ReviewRepository reviewRepository, CartRepository cartRepository) {
+    // コンストラクタで両方のリポジトリを注入
+    public ProductService(ProductRepository productRepository, ReviewRepository reviewRepository) {
         this.productRepository = productRepository;
         this.reviewRepository = reviewRepository;
-        this.cartRepository = cartRepository;
     }
 
     // 商品の全リストを取得
@@ -54,26 +52,40 @@ public class ProductService {
         return reviewRepository.findByProductId(productId);
     }
 
+    // カート内の商品を取得
+    public List<Product> getCartProducts(HttpSession session) {
+        @SuppressWarnings("unchecked")
+        List<Product> cart = (List<Product>) session.getAttribute("cart");
+        return cart == null ? new ArrayList<>() : cart;
+    }
+
+    // 商品をカートに追加
+    public void addToCart(Long productId, int quantity, HttpSession session) {
+        Product product = findProductById(productId); // 商品情報を取得
+        Cart cart = (Cart) session.getAttribute("cart");
+        if (cart == null) {
+            cart = new Cart(); // カートがない場合は新規作成
+        }
+        cart.addItem(product, quantity); // 商品をカートに追加
+        session.setAttribute("cart", cart); // セッションに保存
+    }
+
+ // カート内の合計金額を計算
+    public double calculateCartTotal(List<Product> products, List<Integer> quantities) {
+        double total = 0;
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            int quantity = quantities.get(i);
+            total += product.getPrice() * quantity;  // 商品価格 × 数量
+        }
+        return total * 1.1; // 消費税を加算
+    }
+
+
+    // 商品IDに基づいて商品を検索（リストで返す）
     public List<Product> findProductsByProductId(Long productId) {
-        // 商品IDを使って商品を検索するロジック
         return productRepository.findById(productId)
                                  .map(Collections::singletonList)  // 見つかった商品をリストとして返す
                                  .orElse(Collections.emptyList());  // 見つからなければ空のリストを返す
-    }
-
-    @Transactional
-    public void addToCart(Long productId) {
-        // 仮のユーザーIDを設定 (ユーザー認証がある場合は適切に取得)
-        Integer userId = 1;
-
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid product ID: " + productId));
-
-        // カートに追加する
-        Cart cart = new Cart();
-        cart.setUserId(userId);
-        cart.setProduct(product);
-        cart.setQuantity(1); // 初期数量を1とする
-        cartRepository.save(cart);
     }
 }

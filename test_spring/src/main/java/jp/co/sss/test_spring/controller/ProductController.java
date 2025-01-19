@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Product;
 import jp.co.sss.test_spring.entity.Review;
 import jp.co.sss.test_spring.service.ProductService;
@@ -49,14 +50,12 @@ public class ProductController {
 
     // 商品詳細表示（口コミ含む）
     @GetMapping("/{id}")
-    public String showProductDetail(@PathVariable("id") Long productId, Model model) {
-        Product product = service.findProductById(productId);
+    public String showProductDetail(@PathVariable Long id, Model model) {
+        Product product = service.findProductById(id);
         model.addAttribute("product", product);
-
-        List<Review> reviews = service.findReviewsByProductId(productId);
+        List<Review> reviews = service.findReviewsByProductId(id);
         model.addAttribute("hasReviews", !reviews.isEmpty());
         model.addAttribute("reviews", reviews);
-
         return "products/detail";
     }
 
@@ -70,11 +69,16 @@ public class ProductController {
 
     // 単品購入ページ遷移
     @GetMapping("/detail/{id}/purchase")
-    public String purchaseProduct(@PathVariable("id") Long productId, Model model) {
-        Product product = service.findProductById(productId);
+    public String purchaseProduct(@PathVariable Long id, Model model) {
+        Product product = service.findProductById(id);
         model.addAttribute("product", product);
         return "products/purchase";
     }
-    
-    
+
+    // 商品をカートに追加
+    @PostMapping("/{id}/add-to-cart")
+    public String addProductToCart(@PathVariable Long id, @RequestParam(defaultValue = "1") int quantity, HttpSession session) {
+        service.addToCart(id, quantity, session);
+        return "redirect:/cart";
+    }
 }
