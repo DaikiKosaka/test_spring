@@ -11,6 +11,18 @@
             // カートページにリダイレクト
             window.location.href = '/cart';
         }
+
+        // 在庫数を確認する関数
+        function checkStockAvailability() {
+            const quantity = parseInt(document.getElementById("quantity").value);
+            const stock = parseInt(document.getElementById("stock").textContent); // 在庫数をspanから取得
+
+            if (quantity > stock) {
+                alert("在庫数を超える数量はカートに追加できません。");
+                return false;  // 追加をキャンセル
+            }
+            return true;  // カートに追加
+        }
     </script>
 </head>
 <body>
@@ -23,7 +35,7 @@
         <h2 th:text="${product.productName}">商品名が表示されます</h2>
         <p>価格: <span th:text="${product.price}"></span>円</p>
         <p>税抜き価格: <span th:text="${product.taxPrice}"></span>円</p>
-        <p>在庫: <span th:text="${product.stock}"></span>個</p>
+        <p>在庫: <span id="stock" th:text="${product.stock}"></span>個</p>
         <p>コメント: <span th:text="${product.comment}"></span></p>
         <img th:src="@{${product.imgPath}}" th:alt="${product.productName}" style="width: 300px; height: auto;">
 
@@ -33,7 +45,9 @@
     <!-- 購入とカートボタン -->
     <div>
         <button th:onclick="|location.href='/products/detail/' + ${product.productId} + '/purchase'|">単品購入</button>
-        <form th:action="@{/products/{id}/add-to-cart(id=${product.productId})}" method="post" onsubmit="addToCart()">
+        <form th:action="@{/products/{id}/add-to-cart(id=${product.productId})}" method="post" onsubmit="return checkStockAvailability()">
+            <label for="quantity">数量</label>
+            <input type="number" id="quantity" name="quantity" value="1" min="1" max="100" required>
             <button type="submit">カートに追加</button>
         </form>
     </div>

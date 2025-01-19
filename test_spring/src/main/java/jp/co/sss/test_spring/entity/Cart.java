@@ -100,4 +100,9 @@ public class Cart {
         this.product = product;  // 商品を設定
         this.quantity = quantity;  // 数量を設定
     }
+
+	public void addItem(Product product2, int quantity2, String productName) {
+		// TODO 自動生成されたメソッド・スタブ
+		
+	}
 }

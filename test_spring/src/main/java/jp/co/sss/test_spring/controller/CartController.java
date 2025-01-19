@@ -25,22 +25,31 @@ public class CartController {
     // カートの表示
     @GetMapping
     public String showCart(HttpSession session, Model model) {
-        model.addAttribute("cartProducts", service.getCartProducts(session));
+        model.addAttribute("cartProducts", service.getCart(session));
         return "cart";
     }
 
     // 商品をカートに追加
     @PostMapping("/{productId}")
     public String addProductToCart(@PathVariable Long productId, @RequestParam int quantity, HttpSession session) {
-        service.addToCart(productId, quantity, session);
+        try {
+            service.addToCart(productId, quantity, session);
+        } catch (Exception e) {
+            return "redirect:/cart?error=true";  // エラーが発生した場合、カートページにリダイレクト
+        }
         return "redirect:/cart";
     }
 
     // 商品購入ページ
     @GetMapping("/purchase/{productId}")
     public String purchaseProduct(@PathVariable Long productId, Model model) {
-        Product product = service.findProductById(productId);
-        model.addAttribute("product", product);
+        try {
+            Product product = service.findProductById(productId);
+            model.addAttribute("product", product);
+        } catch (Exception e) {
+            model.addAttribute("error", "商品情報の取得に失敗しました。");
+            return "/product";
+        }
         return "products/purchase";
     }
 }

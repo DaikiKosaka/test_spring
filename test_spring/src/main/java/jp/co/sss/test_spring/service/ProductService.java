@@ -1,6 +1,5 @@
 package jp.co.sss.test_spring.service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -53,22 +52,23 @@ public class ProductService {
     }
 
     // カート内の商品を取得
-    public List<Product> getCartProducts(HttpSession session) {
-        @SuppressWarnings("unchecked")
-        List<Product> cart = (List<Product>) session.getAttribute("cart");
-        return cart == null ? new ArrayList<>() : cart;
+    public Cart getCart(HttpSession session) {
+        return (Cart) session.getAttribute("cart");  // セッションからCartオブジェクトを取得
     }
 
     // 商品をカートに追加
     public void addToCart(Long productId, int quantity, HttpSession session) {
         Product product = findProductById(productId); // 商品情報を取得
-        Cart cart = (Cart) session.getAttribute("cart");
+        Cart cart = (Cart) session.getAttribute("cart"); // セッションからカートを取得
+
         if (cart == null) {
-            cart = new Cart(); // カートがない場合は新規作成
+            cart = new Cart(); // カートがない場合、新規作成
         }
+
         cart.addItem(product, quantity); // 商品をカートに追加
         session.setAttribute("cart", cart); // セッションに保存
     }
+
 
  // カート内の合計金額を計算
     public double calculateCartTotal(List<Product> products, List<Integer> quantities) {
@@ -88,4 +88,9 @@ public class ProductService {
                                  .map(Collections::singletonList)  // 見つかった商品をリストとして返す
                                  .orElse(Collections.emptyList());  // 見つからなければ空のリストを返す
     }
+
+	public double calculateCartTotal(Cart cart) {
+		// TODO 自動生成されたメソッド・スタブ
+		return 0;
+	}
 }

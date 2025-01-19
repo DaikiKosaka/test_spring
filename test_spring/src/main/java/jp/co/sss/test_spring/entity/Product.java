@@ -102,4 +102,9 @@ public class Product {
     public void setIncludeTax(Boolean includeTax) {
         this.includeTax = includeTax;
     }
+
+	public Double getQuantity() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
 }
