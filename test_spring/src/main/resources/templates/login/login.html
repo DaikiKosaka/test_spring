@@ -15,8 +15,11 @@
         <button type="submit">ログイン</button>
     </form>
     <a th:href="register">新規登録</a>
-        <div>
+    <div>
         <p th:if="${loginError}" th:text="${loginError}"></p>
     </div>
+    <div th:if="${error}" style="color: red;">
+        <p th:text="${error}"></p>
+    </div>    
 </body>
 </html>

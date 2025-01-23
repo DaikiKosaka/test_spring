@@ -35,7 +35,23 @@ public class Cart {
     @Column(nullable = false)
     private LocalDateTime updatedAt; // 更新日時
 
-    // ゲッターとセッター
+    // 商品をカートに追加
+    public void addItem(Product product, int quantity) {
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    // 商品削除のメソッドは、Cartの管理方式に合わせて別途実装する必要があります。
+
+    // カートに登録された商品情報を取得
+    public Product getProduct() {
+        return product;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
     public Integer getCartId() {
         return cartId;
     }
@@ -52,16 +68,8 @@ public class Cart {
         this.userId = userId;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
     }
 
     public void setQuantity(Integer quantity) {
@@ -95,14 +103,8 @@ public class Cart {
         updatedAt = LocalDateTime.now();
     }
 
-    // 商品と数量をカートに追加
-    public void addItem(Product product, int quantity) {
-        this.product = product;  // 商品を設定
-        this.quantity = quantity;  // 数量を設定
-    }
-
-	public void addItem(Product product2, int quantity2, String productName) {
+	public Object getItems() {
 		// TODO 自動生成されたメソッド・スタブ
-		
+		return null;
 	}
 }

@@ -6,6 +6,7 @@
     <title>カート確認画面</title>
 </head>
 <body>
+	<th:block th:replace="~{fragments/header :: header}"></th:block>
     <h1>カート確認</h1>
 
     <div>
@@ -36,8 +37,8 @@
 
     <!-- ナビゲーションボタン -->
     <div>
-        <button th:onclick="location.href='test_spring/purchase'">レジに進む</button>
-        <button th:onclick="location.href='/test_spring/cart_detail'">カートに移動</button>
+        <button th:onclick="location.href='/test_spring/purchase'">レジに進む</button>
+        <button th:onclick="location.href='/test_spring/cart/cart_detail'">カートに移動</button>
         <button th:onclick="|location.href='/test_spring/products'|">TOP画面に戻る</button>
 
 

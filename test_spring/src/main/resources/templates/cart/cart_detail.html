@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カート詳細</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        img {
+            max-width: 100px;
+            height: auto;
+        }
+        .total {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+	<th:block th:replace="~{fragments/header :: header}"></th:block>
+    <h1>カート詳細</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>画像</th>
+                <th>商品名</th>
+                <th>数量</th>
+                <th>価格</th>
+                <th>税込価格</th>
+                <th>削除</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${cartItems}">
+            <td><img th:src="@{${product.imgPath}}" alt="商品画像" /></td>
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.stock}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.taxPrice}"></td>
+                <td>
+                    <form th:action="@{/cart/delete/{id}(id=${item.cartId})}" method="post">
+                        <button type="submit">削除</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <p class="total">合計金額: <span th:text="${totalAmount}"></span> 円</p>
+        <form th:action="@{/checkout}" method="post">
+            <button type="submit">レジに進む</button>
+        </form>
+    </div>
+</body>
+</html>
