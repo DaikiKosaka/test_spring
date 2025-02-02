@@ -37,10 +37,6 @@ public class CartController {
         } catch (Exception e) {
             return "redirect:/cart?error=true";  // エラーが発生した場合、カートページにリダイレクト
         }
-        if (session.getAttribute("user") == null) {
-        	model.addAttribute("error", "ログインしてからカートに追加してください。");
-        	return "redirect:/login";
-        }
         return "redirect:/cart";
     }
 
@@ -58,10 +54,20 @@ public class CartController {
     }
     
  // カート詳細ページを表示
-    @GetMapping("/cart_detail")
-    public String showCartDetail(HttpSession session, Model model) {
-        model.addAttribute("cartProducts", service.getCart(session));
+    @GetMapping({"/cart_detail"})
+    public String showCartDetail(@PathVariable(value = "id", required = false) Long id, HttpSession session, Model model) {
+        if (id != null) {
+            // 商品IDが指定されている場合、その商品情報を取得
+            Product product = service.getProductById(id, session);
+            if (product == null) {
+                model.addAttribute("error", "商品がカートに見つかりません。");
+            } else {
+                model.addAttribute("product", product); // 商品情報を渡す
+            }
+        } else {
+            // 商品IDが指定されていない場合は、カート内の商品一覧を表示
+            model.addAttribute("cartProducts", service.getCart(session));
+        }
         return "cart/cart_detail"; // cart_detail.html をテンプレートとして使用
     }
-
 }

@@ -93,4 +93,9 @@ public class ProductService {
 		// TODO 自動生成されたメソッド・スタブ
 		return 0;
 	}
+
+	public Product getProductById(Long id, HttpSession session) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
 }
