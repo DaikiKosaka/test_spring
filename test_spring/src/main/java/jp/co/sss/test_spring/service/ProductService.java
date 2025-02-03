@@ -68,20 +68,7 @@ public class ProductService {
         cart.addItem(product, quantity); // 商品をカートに追加
         session.setAttribute("cart", cart); // セッションに保存
     }
-
-
- // カート内の合計金額を計算
-    public double calculateCartTotal(List<Product> products, List<Integer> quantities) {
-        double total = 0;
-        for (int i = 0; i < products.size(); i++) {
-            Product product = products.get(i);
-            int quantity = quantities.get(i);
-            total += product.getPrice() * quantity;  // 商品価格 × 数量
-        }
-        return total * 1.1; // 消費税を加算
-    }
-
-
+    
     // 商品IDに基づいて商品を検索（リストで返す）
     public List<Product> findProductsByProductId(Long productId) {
         return productRepository.findById(productId)
@@ -89,12 +76,7 @@ public class ProductService {
                                  .orElse(Collections.emptyList());  // 見つからなければ空のリストを返す
     }
 
-	public double calculateCartTotal(Cart cart) {
-		// TODO 自動生成されたメソッド・スタブ
-		return 0;
-	}
-
-	public Product getProductById(Long id, HttpSession session) {
+	public Product getProductById(Long productId) {
 		// TODO 自動生成されたメソッド・スタブ
 		return null;
 	}

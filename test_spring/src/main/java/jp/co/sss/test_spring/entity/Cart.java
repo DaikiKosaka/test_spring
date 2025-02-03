@@ -1,49 +1,47 @@
 package jp.co.sss.test_spring.entity;
 
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.*;
 
 @Entity
 public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer cartId; // カートID
+    private Integer cartId;
 
     @Column(nullable = false)
-    private Integer userId; // ユーザーID
+    private Integer userId;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product; // 商品
+    private Product product;
 
     @Column(nullable = false)
-    private Integer quantity; // 数量
+    private Integer quantity;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt; // 作成日時
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt; // 更新日時
+    private LocalDateTime updatedAt;
 
-    // 商品をカートに追加
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
     public void addItem(Product product, int quantity) {
         this.product = product;
         this.quantity = quantity;
     }
 
-    // 商品削除のメソッドは、Cartの管理方式に合わせて別途実装する必要があります。
-
-    // カートに登録された商品情報を取得
     public Product getProduct() {
         return product;
     }
@@ -92,19 +90,10 @@ public class Cart {
         this.updatedAt = updatedAt;
     }
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+    public double getTotalPrice() {
+        if (product != null && quantity > 0) {
+            return product.getPrice() * quantity;
+        }
+        return 0.0;
     }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
-	public Object getItems() {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
-	}
 }

@@ -10,41 +10,41 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Product;
+import jp.co.sss.test_spring.service.CartService;
 import jp.co.sss.test_spring.service.ProductService;
 
 @Controller
 @RequestMapping("/cart")
 public class CartController {
 
+    private final CartService cartService;
     private final ProductService service;
 
-    public CartController(ProductService service) {
+    public CartController(CartService cartService, ProductService service) {
+        this.cartService = cartService;
         this.service = service;
     }
 
-    // カートの表示
     @GetMapping
     public String showCart(HttpSession session, Model model) {
-        model.addAttribute("cartProducts", service.getCart(session));
+        model.addAttribute("cartProducts", cartService.getCart(session));
         return "cart";
     }
 
-    // 商品をカートに追加
     @PostMapping("/{productId}")
     public String addProductToCart(@PathVariable Long productId, @RequestParam int quantity, HttpSession session, Model model) {
         try {
-            service.addToCart(productId, quantity, session);
+            cartService.addToCart(productId, quantity, session);
         } catch (Exception e) {
-            return "redirect:/cart?error=true";  // エラーが発生した場合、カートページにリダイレクト
+            return "redirect:/cart?error=true";
         }
         return "redirect:/cart";
     }
 
-    // 商品購入ページ
     @GetMapping("/purchase/{productId}")
     public String purchaseProduct(@PathVariable Long productId, Model model) {
         try {
-            Product product = service.findProductById(productId);
+            Product product = cartService.getProductById(productId, null);
             model.addAttribute("product", product);
         } catch (Exception e) {
             model.addAttribute("error", "商品情報の取得に失敗しました。");
@@ -52,22 +52,16 @@ public class CartController {
         }
         return "products/purchase";
     }
-    
- // カート詳細ページを表示
-    @GetMapping({"/cart_detail"})
-    public String showCartDetail(@PathVariable(value = "id", required = false) Long id, HttpSession session, Model model) {
-        if (id != null) {
-            // 商品IDが指定されている場合、その商品情報を取得
-            Product product = service.getProductById(id, session);
-            if (product == null) {
-                model.addAttribute("error", "商品がカートに見つかりません。");
-            } else {
-                model.addAttribute("product", product); // 商品情報を渡す
-            }
-        } else {
-            // 商品IDが指定されていない場合は、カート内の商品一覧を表示
-            model.addAttribute("cartProducts", service.getCart(session));
-        }
-        return "cart/cart_detail"; // cart_detail.html をテンプレートとして使用
+
+    @GetMapping("/cart_detail")
+    public String showCartDetail(HttpSession session, Model model) {
+        model.addAttribute("cartProducts", cartService.getCart(session));
+        return "cart/cart_detail";
+    }
+
+    @PostMapping("/{id}/add-to-cart")
+    public String addProductToCart(@PathVariable Long id, @RequestParam(defaultValue = "1") int quantity, HttpSession session) {
+        service.addToCart(id, quantity, session);
+        return "redirect:/cart";
     }
 }
