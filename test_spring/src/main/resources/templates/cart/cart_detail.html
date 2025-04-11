@@ -59,7 +59,7 @@
 
     <div>
         <p class="total">合計金額: <span th:text="${totalPrice}"></span> 円</p>
-        <form th:action="@{/checkout}" method="post">
+        <form th:action="@{/purchase}" method="post">
             <button type="submit">レジに進む</button>
         </form>
     </div>

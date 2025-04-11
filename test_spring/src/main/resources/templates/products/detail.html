@@ -44,7 +44,7 @@
 
     <!-- 購入とカートボタン -->
     <div>
-        <button th:onclick="|location.href='/products/detail/' + ${product.productId} + '/purchase'|">単品購入</button>
+        <button th:onclick="|location.href='/test_spring/purchase'|">単品購入</button>
         <form th:action="@{/products/{id}/add-to-cart(id=${product.productId})}" method="post" onsubmit="return checkStockAvailability()">
             <label for="quantity">数量</label>
             <input type="number" id="quantity" name="quantity" value="1" min="1" max="100" required>

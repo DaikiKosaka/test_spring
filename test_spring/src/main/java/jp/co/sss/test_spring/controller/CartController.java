@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpSession;
-import jp.co.sss.test_spring.entity.Product;
 import jp.co.sss.test_spring.service.CartService;
 import jp.co.sss.test_spring.service.ProductService;
 
@@ -41,17 +40,13 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    @GetMapping("/purchase/{productId}")
-    public String purchaseProduct(@PathVariable Long productId, Model model) {
-        try {
-            Product product = cartService.getProductById(productId, null);
-            model.addAttribute("product", product);
-        } catch (Exception e) {
-            model.addAttribute("error", "商品情報の取得に失敗しました。");
-            return "/product";
-        }
-        return "products/purchase";
+    @GetMapping("/purchase")
+    public String showPurchaseForm(HttpSession session, Model model) {
+        // セッションからカートの商品を取得
+        model.addAttribute("cartProducts", cartService.getCart(session));
+        return "purchase_form";  // purchase_form.html に遷移
     }
+
 
     @GetMapping("/cart_detail")
     public String showCartDetail(HttpSession session, Model model) {
