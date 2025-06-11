@@ -4,8 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "products")
 public class Product {
 
     @Id
@@ -13,7 +15,7 @@ public class Product {
     private Integer productId; // 商品ID
 
     private String productName; // 商品名
-    private Double price; // 価格
+    private int price; // 価格
     private Double taxPrice; // 税込価格
     private Integer stock; // 在庫
     private String comment; // コメント
@@ -39,11 +41,11 @@ public class Product {
         this.productName = productName;
     }
 
-    public Double getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 

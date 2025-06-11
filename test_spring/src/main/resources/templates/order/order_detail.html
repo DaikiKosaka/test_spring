@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <title>注文詳細</title>
+</head>
+<body>
+    <h1>注文詳細</h1>
+
+    <p>注文ID: <span th:text="${order.orderId}"></span></p>
+    <p>ユーザーID: <span th:text="${order.userId}"></span></p>
+    <p>合計金額: ￥<span th:text="${order.totalAmount}"></span></p>
+    <p>注文状況: <span th:text="${order.status}"></span></p>
+
+    <h2>注文商品一覧</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>商品名</th>
+                <th>単価</th>
+                <th>数量</th>
+                <th>小計</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item : ${order.orderItems}">
+                <td th:text="${item.product.name}"></td>
+                <td>￥<span th:text="${item.price}"></span></td>
+                <td th:text="${item.quantity}"></td>
+                <td>￥<span th:text="${item.price * item.quantity}"></span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><a href="/cart">カートに戻る</a></p>
+</body>
+</html>

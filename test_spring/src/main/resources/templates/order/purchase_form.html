@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>購入フォーム</title>
+</head>
+<body>
+    <h1>購入フォーム</h1>
+
+    <form th:action="@{/order/purchase}" th:object="${order}" method="post">
+        <label for="userId">ユーザーID:</label>
+        <input type="number" th:field="*{userId}" id="userId" required />
+        <br/>
+
+        <label for="totalAmount">合計金額:</label>
+        <input type="number" th:field="*{totalAmount}" id="totalAmount" required />
+        <br/>
+
+        <label for="status">ステータス:</label>
+        <input type="text" th:field="*{status}" id="status" required />
+        <br/>
+
+        <button type="submit">購入確定</button>
+    </form>
+</body>
+</html>

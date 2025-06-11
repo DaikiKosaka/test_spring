@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Product;
 import jp.co.sss.test_spring.entity.Review;
 import jp.co.sss.test_spring.service.ProductService;
@@ -75,10 +74,5 @@ public class ProductController {
         return "products/purchase";
     }
 
-    // 商品をカートに追加
-    @PostMapping("/{id}/add-to-cart")
-    public String addProductToCart(@PathVariable Long id, @RequestParam(defaultValue = "1") int quantity, HttpSession session) {
-        service.addToCart(id, quantity, session);
-        return "redirect:/cart";
-    }
+
 }

@@ -1,108 +1,106 @@
 package jp.co.sss.test_spring.service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Cart;
-import jp.co.sss.test_spring.entity.Order;
-import jp.co.sss.test_spring.entity.OrderItem;
 import jp.co.sss.test_spring.entity.Product;
-import jp.co.sss.test_spring.repository.OrderRepository;
-import jp.co.sss.test_spring.repository.OrderItemRepository;
+import jp.co.sss.test_spring.repository.ProductRepository;
 
-@Service  // サービスクラスとして注釈を追加
+@Service
 public class CartService {
 
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
-    public CartService(OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-    }
+    // カートに商品を追加
+    @SuppressWarnings("unchecked")
+    public void addToCart(Long productId, int quantity, HttpSession session) {
+        Product product = productRepository.findById(productId).orElse(null);
+        if (product == null) return;
 
-    public Product getProductById(Long id, HttpSession session) {
-        // ここで商品情報を取得するロジックを実装
-        // 例えば、データベースから商品情報を取得する
-        return null;  // 仮の戻り値
-    }
-
-    public Cart getCart(HttpSession session) {
-        return (Cart) session.getAttribute("cart");  // セッションからCartオブジェクトを取得
-    }
-
-    public static void addToCart(Long productId, int quantity, HttpSession session) {
-        Product product = findProductById(productId); // 商品情報を取得
-        Cart cart = (Cart) session.getAttribute("cart"); // セッションからカートを取得
-
-        if (cart == null) {
-            cart = new Cart(); // カートがない場合、新規作成
+        List<Cart> cartList = (List<Cart>) session.getAttribute("cart");
+        if (cartList == null) {
+            cartList = new ArrayList<>();
         }
 
-        cart.addItem(product, quantity); // 商品をカートに追加
-        session.setAttribute("cart", cart); // セッションに保存
-    }
-
-    private static Product findProductById(Long productId) {
-        // TODO 自動生成されたメソッド・スタブ
-        return null;
-    }
-
-    // カートの商品をOrderとして注文を作成
-    public Order createOrderFromCart(Long userId, HttpSession session) {
-        Cart cart = getCart(session); // セッションからカートを取得
-
-        if (cart == null || cart.getItems().isEmpty()) {
-            throw new IllegalStateException("カートにアイテムがありません。");
+        for (Cart cart : cartList) {
+            if (cart.getProduct().getProductId().equals(productId)) {
+                cart.setQuantity(cart.getQuantity() + quantity);
+                session.setAttribute("cart", cartList);
+                return;
+            }
         }
 
-        // 注文作成
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setStatus("PENDING");  // 注文のステータス（仮に"保留"として設定）
-        order.setCreatedAt(LocalDateTime.now());
-        order.setCreatedAt(LocalDateTime.now());
+        Cart newCart = new Cart();
+        newCart.setCartId(System.currentTimeMillis()); // 一時的にcartIdをセット
+        newCart.setProduct(product);
+        newCart.setQuantity(quantity);
+        newCart.setUserId((long) 1); // 仮に固定
+        cartList.add(newCart);
 
-        // 注文の保存
-        orderRepository.save(order);
-
-        // カート内の商品をOrderItemとしてOrderに追加
-        for (Cart cartItem : cart.getItems()) {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setProduct(cartItem.getProduct());
-            orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getProduct().getPrice());
-
-            orderItemRepository.save(orderItem);
-        }
-
-        // 注文後にカートをクリアする場合
-        clearCart(session);
-
-        return order;
+        session.setAttribute("cart", cartList);
     }
 
-    public double calculateCartTotal(List<Product> products, List<Integer> quantities) {
+    // カート内の商品一覧を取得
+    @SuppressWarnings("unchecked")
+    public List<Cart> getCart(HttpSession session) {
+        List<Cart> cartList = (List<Cart>) session.getAttribute("cart");
+        if (cartList == null) {
+            cartList = new ArrayList<>();
+        }
+        return cartList;
+    }
+
+    // cartIdで商品を削除
+    @SuppressWarnings("unchecked")
+    public void removeFromCartByCartId(Long cartId, HttpSession session) {
+        List<Cart> cartList = (List<Cart>) session.getAttribute("cart");
+
+        System.out.println("=== カート内容確認 ===");
+        if (cartList != null) {
+            for (Cart cart : cartList) {
+                System.out.println("Cart item ID: " + cart.getCartId());
+            }
+
+            cartList.removeIf(cart ->
+                cart.getCartId() != null && cart.getCartId().equals(cartId)
+            );
+
+            session.setAttribute("cart", cartList);
+        }
+    }
+
+    // カート内の商品リストを取得
+    public List<Product> getCartItems(HttpSession session) {
+        List<Cart> cartList = getCart(session);
+        List<Product> products = new ArrayList<>();
+
+        for (Cart cart : cartList) {
+            products.add(cart.getProduct());
+        }
+
+        return products;
+    }
+
+    // カートの合計金額を計算（税金込み）
+    public double calculateCartTotal(List<Cart> cartList) {
         double total = 0;
-        for (int i = 0; i < products.size(); i++) {
-            Product product = products.get(i);
-            int quantity = quantities.get(i);
-            total += product.getPrice() * quantity;  // 商品価格 × 数量
+        for (Cart cart : cartList) {
+            Product product = cart.getProduct();
+            int quantity = cart.getQuantity();
+            total += product.getPrice() * quantity;
         }
         return total * 1.1; // 消費税を加算
     }
 
-    // ユーザーIDでカートの商品を取得するメソッド（仮実装）
+    // ユーザーIDに基づくカートアイテムを取得（実装が必要）
     public List<Cart> getCartItemsByUserId(Integer userId) {
-        // TODO 自動生成されたメソッド・スタブ
+        // TODO: ユーザーIDに基づいてカートアイテムを取得する実装
         return null;
     }
-
-    // カートのクリア
-    public void clearCart(HttpSession session) {
-        session.setAttribute("cart", new Cart());  // セッションから
+}

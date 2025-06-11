@@ -1,32 +1,37 @@
 package jp.co.sss.test_spring.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+import jp.co.sss.test_spring.entity.Cart;
 import jp.co.sss.test_spring.entity.Order;
 import jp.co.sss.test_spring.repository.OrderRepository;
 
 @Service
+@Transactional
 public class OrderService {
+
     @Autowired
     private OrderRepository orderRepository;
 
-    public Optional<Order> getOrderById(Long id) {
-        return orderRepository.findById(id);
+    // 例：@Lookup などの抽象メソッドがないか確認
+    // もしあれば、実装を追加するか、@Lookupを正しく使う
+
+    public Order saveOrder(Order order) {
+        return orderRepository.save(order);
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+    public Long registerOrder(Long userId, List<Cart> cartList) {
+        // 実装を書く
+        return 1L; // 仮の戻り値
     }
 
-    public void saveOrder(Order order) {
-        orderRepository.save(order);
-    }
-
-    public void saveAllOrders(List<Order> orders) {
-        orderRepository.saveAll(orders);
+    public Order getOrderWithItems(Long orderId) {
+        // 実装を書く
+        return orderRepository.findById(orderId).orElse(null);
     }
 }
+

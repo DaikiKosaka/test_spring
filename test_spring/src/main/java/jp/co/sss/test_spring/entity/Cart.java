@@ -1,114 +1,59 @@
 package jp.co.sss.test_spring.entity;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "carts")
 public class Cart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer cartId;
-
-    @Column(nullable = false)
-    private Integer userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 自動採番
+    private Long cartId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Long userId;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+    // --- Getter/Setter ---
+    public Long getCartId() {
+        return cartId;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
-
-    public void addItem(Product product, int quantity) {
-        this.product = product;
-        this.quantity = quantity;
+    public void setCartId(Long cartId) {
+        this.cartId = cartId;
     }
 
     public Product getProduct() {
         return product;
     }
 
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public Integer getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
     }
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public double getTotalPrice() {
-        if (product != null && quantity > 0) {
-            return product.getPrice() * quantity;
-        }
-        return 0.0;
-    }
-
-	public Optional<Product> getItems() {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
-	}
 }

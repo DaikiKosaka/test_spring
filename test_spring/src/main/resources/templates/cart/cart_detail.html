@@ -27,6 +27,7 @@
         }
     </style>
 </head>
+
 <body>
     <th:block th:replace="~{fragments/header :: header}"></th:block>
     <h1>カート詳細</h1>
@@ -49,9 +50,9 @@
                 <td th:text="${item.product.price}"></td>
                 <td th:text="${item.product.price * 1.1}"></td> <!-- 税込価格を計算 -->
                 <td>
-                    <form th:action="@{/cart/delete/{id}(id=${item.cartId})}" method="post">
-                        <button type="submit">削除</button>
-                    </form>
+                   <button th:attr="data-cart-id=${item.cartId}" onclick="deleteCartItem(this)">削除</button>
+
+
                 </td>
             </tr>
         </tbody>
@@ -59,9 +60,38 @@
 
     <div>
         <p class="total">合計金額: <span th:text="${totalPrice}"></span> 円</p>
-        <form th:action="@{/purchase}" method="post">
+        <form th:action="@{/order/purchase}" method="post">
+
             <button type="submit">レジに進む</button>
         </form>
     </div>
 </body>
+
+<script th:inline="javascript">
+function deleteCartItem(button) {
+  const cartId = button.getAttribute("data-cart-id");
+  if (!confirm(`この商品（カートID: ${cartId}）を削除しますか？`)) return;
+
+  fetch(`/test_spring/cart/delete/${cartId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => {
+    if (response.ok) {
+      location.reload();
+    } else {
+      alert("削除に失敗しました");
+    }
+  })
+  .catch(error => {
+    console.error("通信エラー:", error);
+    alert("通信エラーが発生しました");
+  });
+}
+
+</script>
+
 </html>

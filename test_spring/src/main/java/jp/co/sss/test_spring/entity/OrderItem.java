@@ -1,7 +1,5 @@
 package jp.co.sss.test_spring.entity;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -11,8 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -20,59 +16,46 @@ import jakarta.persistence.Table;
 public class OrderItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orderItem_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderItemId;
 
     @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    @Column(name = "product_id")
+    private Integer productId;
 
-    private int quantity;
+    private Integer quantity;
 
-    @Column(name = "price", nullable = false)
-    private BigDecimal price;
+    private Integer price;
 
-    @Column(name = "created_at", updatable = false)
-    private Timestamp createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private LocalDateTime updatedAt;
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = Timestamp.valueOf(LocalDateTime.now());
-        this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
-    }
+    // getter/setter
+    public Long getOrderItemId() { return orderItemId; }
+    public void setOrderItemId(Long orderItemId) { this.orderItemId = orderItemId; }
 
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
-    }
+    public Order getOrder() { return order; }
+    public void setOrder(Order order) { this.order = order; }
 
-	public void setOrder(Order order2) {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
+    public Integer getProductId() { return productId; }
+    public void setProductId(Integer productId) { this.productId = productId; }
 
-	public void setProduct(Product product2) {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
 
-	public void setQuantity(Integer quantity2) {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
+    public Integer getPrice() { return price; }
+    public void setPrice(Integer price) { this.price = price; }
 
-	public void setPrice(Double price2) {
-		// TODO 自動生成されたメソッド・スタブ
-		
-	}
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    // ゲッター・セッター
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
