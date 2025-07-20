@@ -17,21 +17,24 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
-    // 例：@Lookup などの抽象メソッドがないか確認
-    // もしあれば、実装を追加するか、@Lookupを正しく使う
-
-    public Order saveOrder(Order order) {
-        return orderRepository.save(order);
-    }
-
     public Long registerOrder(Long userId, List<Cart> cartList) {
-        // 実装を書く
-        return 1L; // 仮の戻り値
+        Order order = new Order();
+        order.setUserId(userId);
+
+        int totalAmount = cartList.stream()
+                .mapToInt(cart -> cart.getProduct().getPrice() * cart.getQuantity())
+                .sum();
+        order.setTotalAmount(totalAmount);
+        order.setStatus("NEW");
+        order.setCreatedAt(java.time.LocalDateTime.now());
+        order.setUpdatedAt(java.time.LocalDateTime.now());
+
+        Order savedOrder = orderRepository.save(order);
+
+        return savedOrder.getOrderId();
     }
 
     public Order getOrderWithItems(Long orderId) {
-        // 実装を書く
-        return orderRepository.findById(orderId).orElse(null);
+        return orderRepository.findByIdWithItems(orderId).orElse(null);
     }
 }
-

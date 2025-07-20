@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Cart;
 import jp.co.sss.test_spring.entity.Order;
+import jp.co.sss.test_spring.service.CartService;
 import jp.co.sss.test_spring.service.OrderService;
 
 @Controller
@@ -21,27 +22,30 @@ import jp.co.sss.test_spring.service.OrderService;
 public class OrderController {
 
     @Autowired
+    private CartService cartService;
+    
+    @Autowired
     private OrderService orderService;
 
     // 購入確認フォームを表示
     @GetMapping("/purchase")
-    public String showPurchaseForm(HttpSession session, Model model) {
+    public String showPurchaseForm(Model model, HttpSession session) {
         List<Cart> cartList = (List<Cart>) session.getAttribute("cart");
 
-        int totalPrice = 0;
-        if (cartList != null) {
-            for (Cart cart : cartList) {
-                totalPrice += cart.getProduct().getPrice() * cart.getQuantity();
-            }
+        if (cartList == null || cartList.isEmpty()) {
+            model.addAttribute("error", "カートが空です。");
+            return "redirect:/test_spring/cart/cart_detail";
         }
 
-        model.addAttribute("cartProducts", cartList);
+        // 合計金額を計算して Model に渡す
+        double totalPrice = cartService.calculateCartTotal(cartList);
         model.addAttribute("totalPrice", totalPrice);
 
-        return "order/purchase_form";  // resources/templates/order/purchase_form.html
+        model.addAttribute("order", new Order());
+        return "order/purchase_form";
     }
 
-    // 購入確定処理
+    
     @PostMapping("/purchase")
     public String completePurchase(
             @RequestParam String address,
@@ -62,6 +66,11 @@ public class OrderController {
 
         Long orderId = orderService.registerOrder(userId, cartList);
 
+        if (orderId == null) {
+            model.addAttribute("error", "注文の登録に失敗しました。");
+            return "order/purchase_form";
+        }
+
         session.removeAttribute("cart");
 
         return "redirect:/test_spring/order/detail/" + orderId;
@@ -72,7 +81,7 @@ public class OrderController {
     public String showOrderDetail(@PathVariable Long orderId, Model model) {
         Order order = orderService.getOrderWithItems(orderId);
         model.addAttribute("order", order);
-        return "order/order_detail";
+        return "order/purchase_detail";
     }
     
 }

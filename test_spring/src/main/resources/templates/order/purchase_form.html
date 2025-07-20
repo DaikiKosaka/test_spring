@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>購入フォーム</title>
+    <meta charset="UTF-8" />
+    <title>注文詳細</title>
 </head>
 <body>
-    <h1>購入フォーム</h1>
+<h1>購入確認画面</h1>
 
-    <form th:action="@{/order/purchase}" th:object="${order}" method="post">
-        <label for="userId">ユーザーID:</label>
-        <input type="number" th:field="*{userId}" id="userId" required />
-        <br/>
+<h2>注文商品一覧</h2>
+<table border="1">
+  <thead>
+    <tr><th>価格</th><th>数量</th><th>小計</th></tr>
+  </thead>
+  <tbody>
+    <tr th:each="item : ${order.orderItems}">
+        <td th:text="${item.price}">価格</td>
+        <td th:text="${item.quantity}">数量</td>
+        <td th:text="${item.price * item.quantity}">小計</td>
+    </tr>
+  </tbody>
+</table>
 
-        <label for="totalAmount">合計金額:</label>
-        <input type="number" th:field="*{totalAmount}" id="totalAmount" required />
-        <br/>
+<p>合計金額: <span th:text="${order.totalAmount}"></span> 円</p>
 
-        <label for="status">ステータス:</label>
-        <input type="text" th:field="*{status}" id="status" required />
-        <br/>
+<p><a th:href="@{/cart/cart_detail}">カートに戻る</a></p>
 
-        <button type="submit">購入確定</button>
-    </form>
 </body>
 </html>

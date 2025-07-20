@@ -30,7 +30,9 @@
 
 <body>
     <th:block th:replace="~{fragments/header :: header}"></th:block>
+
     <h1>カート詳細</h1>
+
     <table>
         <thead>
             <tr>
@@ -48,11 +50,9 @@
                 <td th:text="${item.product.productName}"></td>
                 <td th:text="${item.quantity}"></td>
                 <td th:text="${item.product.price}"></td>
-                <td th:text="${item.product.price * 1.1}"></td> <!-- 税込価格を計算 -->
+                <td th:text="${item.product.price * 1.1}"></td>
                 <td>
-                   <button th:attr="data-cart-id=${item.cartId}" onclick="deleteCartItem(this)">削除</button>
-
-
+                    <button th:attr="data-cart-id=${item.cartId}" onclick="deleteCartItem(this)">削除</button>
                 </td>
             </tr>
         </tbody>
@@ -60,38 +60,37 @@
 
     <div>
         <p class="total">合計金額: <span th:text="${totalPrice}"></span> 円</p>
-        <form th:action="@{/order/purchase}" method="post">
 
+        <!-- ✅ 修正済みフォーム（GETで/confirmに遷移） -->
+        <form th:action="@{/cart/confirm}" method="get">
             <button type="submit">レジに進む</button>
         </form>
     </div>
+
+    <script th:inline="javascript">
+        function deleteCartItem(button) {
+            const cartId = button.getAttribute("data-cart-id");
+            if (!confirm(`この商品（カートID: ${cartId}）を削除しますか？`)) return;
+
+            fetch(`/test_spring/cart/delete/${cartId}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert("削除に失敗しました");
+                }
+            })
+            .catch(error => {
+                console.error("通信エラー:", error);
+                alert("通信エラーが発生しました");
+            });
+        }
+    </script>
 </body>
-
-<script th:inline="javascript">
-function deleteCartItem(button) {
-  const cartId = button.getAttribute("data-cart-id");
-  if (!confirm(`この商品（カートID: ${cartId}）を削除しますか？`)) return;
-
-  fetch(`/test_spring/cart/delete/${cartId}`, {
-    method: 'DELETE',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-  .then(response => {
-    if (response.ok) {
-      location.reload();
-    } else {
-      alert("削除に失敗しました");
-    }
-  })
-  .catch(error => {
-    console.error("通信エラー:", error);
-    alert("通信エラーが発生しました");
-  });
-}
-
-</script>
-
 </html>
