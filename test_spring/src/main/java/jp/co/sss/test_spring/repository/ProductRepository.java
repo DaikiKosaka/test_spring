@@ -9,4 +9,9 @@ import jp.co.sss.test_spring.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     // 商品名に検索キーワードを含む商品を取得
     List<Product> findByProductNameContaining(String productName);
+    List<Product> findByCategoryId(Long categoryId);
+    Product findByProductName(String productName);
+    List<Product> findByCategoryId(Integer categoryId);
+    List<Product> findByProductNameContainingAndCategoryId(String keyword, Integer categoryId);
+
 }

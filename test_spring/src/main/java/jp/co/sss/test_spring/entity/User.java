@@ -21,24 +21,30 @@ public class User {
     @Column(name = "user_id") // テーブルのカラム名と一致させる
     private Long id;
 
-    @Column(name = "user_name") // テーブルのカラム名と一致させる
+    @Column(name = "user_name")
     private String username;
+    
+    @Column(name = "user_name_kana")
+    private String usernamekana;
 
     @Column(name = "email")
     private String email;
 
-    @Column(name = "passwords") // passwords に合わせる
+    @Column(name = "passwords")
     private String password;
 
     @Column(name = "phone")
     private String phone;
 
+    @Column(name = "user_address")
+    private String useraddress;
+
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false) // created_at を自動設定
+    @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at") // updated_at を自動更新
+    @Column(name = "updated_at")
     private Timestamp updatedAt;
 
     // ゲッターとセッター
@@ -56,6 +62,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    public String getUsernamekana() {
+        return usernamekana;
+    }
+    
+    public void setUsernamekana(String usernamekana) {
+    	this.usernamekana = usernamekana;
     }
 
     public String getEmail() {
@@ -80,6 +94,14 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getUserAddress() {
+        return this.useraddress;
+    }
+
+    public void setUserAddress(String fullAddress) {
+        this.useraddress = fullAddress;
     }
 
     public Timestamp getCreatedAt() {

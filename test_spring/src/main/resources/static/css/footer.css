@@ -1,0 +1,35 @@
+.footer {
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 14px;
+  margin: 0; /* ← 念のため余白を除去 */
+}
+
+.footer p {
+    margin: 5px 0;
+    text-align: center;
+}
+
+.footer a {
+    color: #ccc;
+    margin: 0 10px;
+    text-decoration: none;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    font-family: "Helvetica Neue", sans-serif;
+    background-color: #f9f9f9;
+}
+main {
+  flex: 1;
+}
+
+.footer {
+  margin-top: auto; /* ← これがポイント！ */
+}

@@ -1,0 +1,127 @@
+.confirm-page main {
+  max-width: 1000px; /* ← 800px → 1000px に拡張 */
+  margin: 0 auto;
+  padding: 60px 40px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-radius: 8px;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+/* タイトル */
+.confirm-page h1 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+/* セクション見出し */
+.confirm-page h2 {
+  font-size: 20px;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  color: #007bff;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+/* ラベルと入力欄の整列 */
+.confirm-form > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.confirm-form label {
+  width: 140px;
+  font-weight: bold;
+  color: #555;
+}
+
+.confirm-form input[type="text"] {
+  flex: 1;
+  min-width: 300px; /* ← 横幅の最小値を広げる */
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.confirm-page ul {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 10px;
+}
+
+.confirm-page ul li {
+  padding: 12px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background-color: #fafafa;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 合計金額 */
+.confirm-page .total {
+  font-weight: bold;
+  font-size: 16px;
+  color: #333;
+  margin-top: 10px;
+  text-align: right;
+}
+
+/* ✅ 確認ボタン（フォームに限定） */
+.confirm-form button[type="submit"] {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 30px;
+  box-sizing: border-box;
+}
+
+.confirm-form button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+/* 無効ボタン */
+.confirm-form .disabled-btn {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+}
+
+/* 商品未選択メッセージ */
+.confirm-page .no-product-message {
+  text-align: center;
+  color: #999;
+  margin-top: 20px;
+  font-size: 16px;
+}
+.confirm-form {
+  padding: 30px 40px;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  width: 100%; /* ← 横幅いっぱいに広げる */
+  box-sizing: border-box;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0; /* ← paddingはmainに移動しましょう */
+    font-family: "Helvetica Neue", sans-serif;
+    background-color: #f9f9f9;
+}

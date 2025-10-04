@@ -4,41 +4,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>カート確認画面</title>
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+    <link th:href="@{/css/footer.css}" rel="stylesheet">
+    <style>
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0; /* ← paddingはmainに移動しましょう */
+    font-family: "Helvetica Neue", sans-serif;
+    background-color: #f9f9f9;
+}
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            color: #007bff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        td img {
+            max-width: 100px;
+            height: auto;
+            border-radius: 4px;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: right;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .disabled-btn {
+            background-color: #ccc !important;
+            color: #666 !important;
+            cursor: not-allowed !important;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
     <th:block th:replace="~{fragments/header :: header}"></th:block>
-    <h1>カート確認</h1>
 
-    <div>
-        <h2>商品一覧</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>画像</th>
-                    <th>商品名</th>
-                    <th>個数</th>
-                    <th>価格</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="cartProduct : ${cartProducts}">
-                    <td><img th:src="@{${cartProduct.product.imgPath}}" alt="商品画像" width="100"></td>
-                    <td th:text="${cartProduct.product.productName}"></td>
-                    <td th:text="${cartProduct.quantity}"></td>
-                    <td th:text="${cartProduct.product.price * cartProduct.quantity}"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <main>
+        <h1>カート確認</h1>
 
-    <div>
-        <p>合計金額: ¥<span th:text="${totalPrice}"></span></p>
-    </div>
+        <div>
+            <h2>商品一覧</h2>
 
-    <div>
-        <button th:onclick="location.href='/test_spring/cart/confirm'">レジに進む</button>
-        <button th:onclick="location.href='/test_spring/cart/cart_detail'">カートに移動</button>
-        <button th:onclick="|location.href='/test_spring/products'|">TOP画面に戻る</button>
-    </div>
+            <div th:if="${#lists.isEmpty(cartProducts)}" class="empty-message">
+                商品がありません。
+            </div>
+
+            <table th:if="${not #lists.isEmpty(cartProducts)}">
+                <thead>
+                    <tr>
+                        <th>画像</th>
+                        <th>商品名</th>
+                        <th>個数</th>
+                        <th>価格</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="cartProduct : ${cartProducts}">
+                        <td>
+                            <img th:src="@{${cartProduct.product.imgPath}}" alt="商品画像">
+                        </td>
+                        <td th:text="${cartProduct.product.productName}"></td>
+                        <td th:text="${cartProduct.quantity}"></td>
+                        <td th:text="${#numbers.formatDecimal(cartProduct.product.price * cartProduct.quantity, 0, 0)}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div>
+            <p>合計金額: ¥<span th:text="${totalPrice}"></span></p>
+        </div>
+
+        <div class="button-group">
+            <button th:onclick="|location.href='/test_spring/cart/confirm'|"
+                    th:disabled="${#lists.isEmpty(cartProducts)}"
+                    th:classappend="${#lists.isEmpty(cartProducts)} ? 'disabled-btn' : ''">
+                レジに進む
+            </button>
+            <button th:onclick="|location.href='/test_spring/cart/cart_detail'|">カートに移動</button>
+            <button th:onclick="|location.href='/test_spring/products'|">TOP画面に戻る</button>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
 </body>
 </html>

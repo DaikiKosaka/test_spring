@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Review;
 import jp.co.sss.test_spring.entity.User;
 import jp.co.sss.test_spring.service.ReviewService;
@@ -30,7 +31,6 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    // 新規口コミ投稿フォーム
     @GetMapping("/{productId}/reviews/new")
     public String newReview(@PathVariable Long productId, Model model) {
         model.addAttribute("productId", productId);
@@ -39,42 +39,41 @@ public class ReviewController {
     }
 
     @PostMapping("/{productId}/reviews")
-    public String addReview(@PathVariable Long productId, 
-                            @ModelAttribute Review review, 
-                            @RequestParam("reviewImg") MultipartFile reviewImg, 
+    public String addReview(@PathVariable Long productId,
+                            @ModelAttribute Review review,
+                            @RequestParam("reviewImg") MultipartFile reviewImg,
                             RedirectAttributes redirectAttributes,
-                            @AuthenticationPrincipal User user) throws IOException {
+                            HttpSession session) throws IOException {
 
-        // 他のバリデーションや処理...
+        User user = (User) session.getAttribute("loginUser");
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "ログインしてください。");
+            return "redirect:/login";
+        }
 
-        // 画像がアップロードされた場合の処理
-        if (!reviewImg.isEmpty()) {
-            // 画像ファイル名を取得
-            String fileName = reviewImg.getOriginalFilename();
+        if (reviewImg != null && !reviewImg.isEmpty()) {
+            String originalName = reviewImg.getOriginalFilename();
+            String fileName = Paths.get(originalName)
+                                   .getFileName()
+                                   .toString()
+                                   .replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
 
-            // 保存先のパスを指定（アプリケーション外のユーザーディレクトリ）
+            // ✅ 保存先をユーザーのホームディレクトリに変更
             String uploadDir = System.getProperty("user.home") + "/uploaded_images";
             Path uploadPath = Paths.get(uploadDir);
-
-            // 保存先ディレクトリが存在しない場合は作成
             Files.createDirectories(uploadPath);
 
-            // 画像を保存するファイルパスを作成
             Path filePath = uploadPath.resolve(fileName);
-            
-            // ファイルを保存
             reviewImg.transferTo(filePath.toFile());
 
-            // 画像パスをReviewに設定（相対パスを利用）
             review.setReviewImgPath("/uploaded_images/" + fileName);
         }
 
-        // 口コミを保存
+        review.setUser(user);
         review.setProductId(productId);
         reviewService.saveReview(productId, review);
 
         redirectAttributes.addFlashAttribute("message", "口コミが投稿されました！");
         return "redirect:/products/" + productId;
     }
-
 }

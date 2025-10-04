@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+    <link th:href="@{/css/footer.css}" rel="stylesheet">
+    <title>マイページ</title>
+    <style>
+       body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0; /* ← 余白をなくす */
+    font-family: "Helvetica Neue", sans-serif;
+    background-color: #f9f9f9;
+}
+main {
+    flex: 1;
+    padding: 40px; /* ← 本文の余白だけここで調整 */
+}
+
+    </style>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <main>
+        <h1>マイページ</h1>
+
+        <div class="profile-card">
+            <p><span class="label">名前:</span><span class="value" th:text="${user.username}">名前</span></p>
+            <p><span class="label">ひらがな表記:</span><span class="value" th:text="${user.usernamekana}">ひらがな</span></p>
+            <p><span class="label">電話番号:</span><span class="value" th:text="${user.phone}">電話番号</span></p>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</body>
+</html>

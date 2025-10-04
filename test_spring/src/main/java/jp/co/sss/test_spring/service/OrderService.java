@@ -1,40 +1,68 @@
 package jp.co.sss.test_spring.service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
 import jp.co.sss.test_spring.entity.Cart;
 import jp.co.sss.test_spring.entity.Order;
+import jp.co.sss.test_spring.entity.OrderItem;
+import jp.co.sss.test_spring.entity.Product;
+import jp.co.sss.test_spring.entity.User;
+import jp.co.sss.test_spring.repository.OrderItemRepository;
 import jp.co.sss.test_spring.repository.OrderRepository;
 
 @Service
-@Transactional
 public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
 
-    public Long registerOrder(Long userId, List<Cart> cartList) {
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    public Order saveOrder(List<Cart> cartList, User user, String status) {
+        int totalAmount = 0;
+
+        for (Cart cart : cartList) {
+            Product product = cart.getProduct();
+            if (product == null) continue;
+            totalAmount += product.getPrice() * cart.getQuantity();
+        }
+
         Order order = new Order();
-        order.setUserId(userId);
-
-        int totalAmount = cartList.stream()
-                .mapToInt(cart -> cart.getProduct().getPrice() * cart.getQuantity())
-                .sum();
+        order.setUser(user);
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
+        order.setStatus(status);
         order.setTotalAmount(totalAmount);
-        order.setStatus("NEW");
-        order.setCreatedAt(java.time.LocalDateTime.now());
-        order.setUpdatedAt(java.time.LocalDateTime.now());
 
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
 
-        return savedOrder.getOrderId();
-    }
+        // ✅ OrderItem をリストに追加して Order にセットする
+        List<OrderItem> orderItemList = new ArrayList<>();
 
-    public Order getOrderWithItems(Long orderId) {
-        return orderRepository.findByIdWithItems(orderId).orElse(null);
+        for (Cart cart : cartList) {
+            Product product = cart.getProduct();
+            if (product == null) continue;
+
+            OrderItem item = new OrderItem();
+            item.setProduct(product);
+            item.setQuantity(cart.getQuantity());
+            item.setPrice(product.getPrice());
+            item.setOrder(order);
+            item.setCreatedAt(LocalDateTime.now());
+            item.setUpdatedAt(LocalDateTime.now());
+
+            orderItemRepository.save(item);
+            orderItemList.add(item); // ✅ リストに追加
+        }
+
+        order.setOrderItems(orderItemList); // ✅ Order にセット
+
+        return order;
     }
 }

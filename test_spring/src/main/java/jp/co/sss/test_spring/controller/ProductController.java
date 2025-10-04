@@ -1,7 +1,10 @@
 package jp.co.sss.test_spring.controller;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import jp.co.sss.test_spring.entity.Product;
 import jp.co.sss.test_spring.entity.Review;
+import jp.co.sss.test_spring.entity.SalesItem;
+import jp.co.sss.test_spring.repository.ProductRepository;
 import jp.co.sss.test_spring.service.ProductService;
+import jp.co.sss.test_spring.service.SalesItemService;
 
 @Controller
 @RequestMapping("/products")
@@ -21,58 +27,134 @@ public class ProductController {
 
     private final ProductService service;
 
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private SalesItemService salesItemService;
+
     public ProductController(ProductService service) {
         this.service = service;
     }
 
-    // 商品一覧表示
     @GetMapping
     public String listProducts(Model model) {
-        List<Product> products = service.findAllProducts();
-        model.addAttribute("products", products);
+        List<SalesItem> salesItems = salesItemService.getActiveSalesItems();
+        if (salesItems == null) {
+            salesItems = new ArrayList<>();
+        }
+
+        for (SalesItem item : salesItems) {
+            if (item.getProductId() != null && item.getDiscountRate() != null) {
+                Product product = service.findProductById(Long.valueOf(item.getProductId()));
+                if (product != null && product.getPrice() != null) {
+                    BigDecimal price = BigDecimal.valueOf(product.getPrice());
+                    BigDecimal discountRate = item.getDiscountRate();
+                    BigDecimal discountMultiplier = BigDecimal.ONE.subtract(discountRate.divide(BigDecimal.valueOf(100)));
+                    BigDecimal discountedPrice = price.multiply(discountMultiplier);
+                    item.setDiscountedPrice(discountedPrice);
+                    
+                    item.setSalesImgPath(product.getImgPath());
+                    
+                }
+            }
+        }
+
+        model.addAttribute("salesItems", salesItems);
         return "products/index";
     }
 
-    // 新規商品作成フォーム
     @GetMapping("/new")
     public String newProductForm(Model model) {
         model.addAttribute("product", new Product());
         return "products/new";
     }
 
-    // 商品保存処理
     @PostMapping("/save")
     public String saveProduct(@ModelAttribute Product product) {
         service.saveProduct(product);
         return "redirect:/products";
     }
 
-    // 商品詳細表示（口コミ含む）
     @GetMapping("/{id}")
     public String showProductDetail(@PathVariable Long id, Model model) {
         Product product = service.findProductById(id);
+        if (product == null) {
+            model.addAttribute("errorMessage", "商品が見つかりませんでした。");
+            return "products/error/404";
+        }
+
         model.addAttribute("product", product);
+
+        List<SalesItem> saleItems = salesItemService.findByProductId(product.getProductId());
+        if (saleItems == null) {
+            saleItems = new ArrayList<>();
+        }
+
+        if (!saleItems.isEmpty()) {
+            SalesItem firstItem = saleItems.get(0);
+            if (product.getPrice() != null && firstItem.getDiscountRate() != null) {
+                BigDecimal price = BigDecimal.valueOf(product.getPrice());
+                BigDecimal discountRate = firstItem.getDiscountRate();
+                BigDecimal discountMultiplier = BigDecimal.ONE.subtract(discountRate.divide(BigDecimal.valueOf(100)));
+                BigDecimal discountedPrice = price.multiply(discountMultiplier);
+                product.setPrice(discountedPrice.doubleValue()); // 型合わせ済み
+            }
+        }
+
+        model.addAttribute("saleItems", saleItems);
+
         List<Review> reviews = service.findReviewsByProductId(id);
-        model.addAttribute("hasReviews", !reviews.isEmpty());
         model.addAttribute("reviews", reviews);
+
         return "products/detail";
     }
 
-    // 商品名で検索した結果を表示
     @GetMapping("/search")
-    public String searchProducts(@RequestParam("keyword") String keyword, Model model) {
-        List<Product> products = service.findProductsByKeyword(keyword);
+    public String searchProducts(@RequestParam(required = false) String keyword,
+                                 @RequestParam(required = false) Integer categoryId,
+                                 Model model) {
+
+        List<Product> products;
+
+        if (keyword != null && !keyword.isEmpty() && categoryId != null) {
+            products = productRepository.findByProductNameContainingAndCategoryId(keyword, categoryId);
+        } else if (keyword != null && !keyword.isEmpty()) {
+            products = productRepository.findByProductNameContaining(keyword);
+        } else if (categoryId != null) {
+            products = productRepository.findByCategoryId(categoryId);
+        } else {
+            products = productRepository.findAll();
+        }
+
+        List<SalesItem> salesItems = salesItemService.getActiveSalesItems();
+        if (salesItems == null) {
+            salesItems = new ArrayList<>();
+        }
+
+        for (SalesItem item : salesItems) {
+            if (item.getProductId() != null && item.getDiscountRate() != null) {
+                Product product = service.findProductById(Long.valueOf(item.getProductId()));
+                if (product != null && product.getPrice() != null) {
+                    BigDecimal price = BigDecimal.valueOf(product.getPrice());
+                    BigDecimal discountRate = item.getDiscountRate();
+                    BigDecimal discountMultiplier = BigDecimal.ONE.subtract(discountRate.divide(BigDecimal.valueOf(100)));
+                    BigDecimal discountedPrice = price.multiply(discountMultiplier);
+                    item.setDiscountedPrice(discountedPrice);
+                }
+            }
+        }
+
         model.addAttribute("products", products);
+        model.addAttribute("salesItems", salesItems);
+
         return "products/search";
     }
 
-    // 単品購入ページ遷移
     @GetMapping("/detail/{id}/purchase")
     public String purchaseProduct(@PathVariable Long id, Model model) {
         Product product = service.findProductById(id);
         model.addAttribute("product", product);
         return "products/purchase";
     }
-
-
 }

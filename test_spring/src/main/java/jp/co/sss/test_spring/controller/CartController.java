@@ -17,12 +17,20 @@ import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Cart;
 import jp.co.sss.test_spring.entity.Product;
 import jp.co.sss.test_spring.service.CartService;
+import jp.co.sss.test_spring.service.OrderService;
+import jp.co.sss.test_spring.service.ProductService;
 
 @Controller
 @RequestMapping("/cart")
 public class CartController {
 
     private final CartService cartService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     public CartController(CartService cartService) {
@@ -38,7 +46,7 @@ public class CartController {
         if (cartList != null) {
             for (Cart cart : cartList) {
                 Product product = cart.getProduct();
-                int price = product.getPrice();
+                Double price = product.getPrice();
                 int quantity = cart.getQuantity();
                 totalPrice += price * quantity;
             }
@@ -77,7 +85,7 @@ public class CartController {
         if (cartList != null) {
             for (Cart cart : cartList) {
                 Product product = cart.getProduct();
-                int price = product.getPrice();
+                Double price = product.getPrice();
                 int quantity = cart.getQuantity();
                 totalPrice += price * quantity;
             }
@@ -96,18 +104,34 @@ public class CartController {
         return ResponseEntity.ok("削除成功");
     }
 
-    // ✅ 購入確認画面（confirm）
+    // ✅ 単品購入確認画面（productIdとquantityを受け取る）
     @GetMapping("/confirm")
-    public String confirmCart(Model model, HttpSession session) {
-        List<Cart> cartList = cartService.getCart(session);
-        model.addAttribute("cartList", cartList); // ← cartList
-        double total = cartService.calculateCartTotal(cartList);
-        model.addAttribute("total", total); // ← total
+    public String confirmCart(@RequestParam(required = false) Long productId,
+                              @RequestParam(required = false) Integer quantity,
+                              HttpSession session,
+                              Model model) {
+
+        if (productId != null && quantity != null) {
+            Product product = productService.findProductById(productId);
+            if (product == null || product.getStock() < quantity) {
+                model.addAttribute("errorMessage", "在庫が不足しています。");
+                return "cart/error";
+            }
+
+            model.addAttribute("product", product);
+            model.addAttribute("quantity", quantity);
+            model.addAttribute("total", product.getPrice() * quantity);
+        } else {
+            List<Cart> cartList = cartService.getCart(session);
+            model.addAttribute("cartList", cartList);
+            double total = cartService.calculateCartTotal(cartList);
+            model.addAttribute("total", total);
+        }
+
         return "confirm";
     }
 
-    // ✅ 購入確定（complete）
- // POST（フォーム送信時に呼ばれる）
+    // ✅ カート購入時の購入確定画面（POST）
     @PostMapping("/complete")
     public String completePurchase(
             @RequestParam String name,
@@ -117,13 +141,16 @@ public class CartController {
             HttpSession session,
             Model model) {
 
-        // フォームからの情報を表示用に渡す
+        session.setAttribute("name", name);
+        session.setAttribute("address", address);
+        session.setAttribute("apartment", apartment);
+        session.setAttribute("payment", payment);
+
         model.addAttribute("name", name);
         model.addAttribute("address", address);
         model.addAttribute("apartment", apartment);
         model.addAttribute("payment", payment);
 
-        // カート情報取得と合計金額計算
         List<Cart> cartList = cartService.getCart(session);
         double totalPrice = cartService.calculateCartTotal(cartList);
 
@@ -133,21 +160,56 @@ public class CartController {
         return "cart/complete";
     }
 
-    // GET（URLを直接開いたときに呼ばれる）
+    // ✅ カート購入時の購入確定画面（GET）
     @GetMapping("/complete")
     public String showCompletePage(HttpSession session, Model model) {
-        // フォーム情報は渡せないため、空のまま or セッションから取得して渡すなど
-        model.addAttribute("name", "");
-        model.addAttribute("address", "");
-        model.addAttribute("apartment", "");
-        model.addAttribute("payment", "");
+        model.addAttribute("name", session.getAttribute("name"));
+        model.addAttribute("address", session.getAttribute("address"));
+        model.addAttribute("apartment", session.getAttribute("apartment"));
+        model.addAttribute("payment", session.getAttribute("payment"));
 
-        // カート情報取得と合計金額計算
         List<Cart> cartList = cartService.getCart(session);
         double totalPrice = cartService.calculateCartTotal(cartList);
 
         model.addAttribute("cartProducts", cartList);
         model.addAttribute("totalPrice", totalPrice);
+
+        return "cart/complete";
+    }
+
+    // ✅ 単品購入時の購入確定画面（POST）
+    @PostMapping("/complete/single")
+    public String completeSinglePurchase(
+            @RequestParam String name,
+            @RequestParam String address,
+            @RequestParam String apartment,
+            @RequestParam String payment,
+            @RequestParam(required = false) Long productId,
+            @RequestParam(required = false) Integer quantity,
+            HttpSession session,
+            Model model) {
+
+        session.setAttribute("name", name);
+        session.setAttribute("address", address);
+        session.setAttribute("apartment", apartment);
+        session.setAttribute("payment", payment);
+        session.setAttribute("productId", productId);
+        session.setAttribute("quantity", quantity);
+
+        model.addAttribute("name", name);
+        model.addAttribute("address", address);
+        model.addAttribute("apartment", apartment);
+        model.addAttribute("payment", payment);
+        model.addAttribute("productId", productId);
+        model.addAttribute("quantity", quantity);
+
+        if (productId != null && quantity != null) {
+            Product product = productService.findProductById(productId);
+            if (product != null) {
+                model.addAttribute("product", product);
+                model.addAttribute("totalPrice", product.getPrice() * quantity);
+            }
+        }
 
         return "cart/complete";
     }

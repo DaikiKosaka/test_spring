@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jp.co.sss.test_spring.entity.Review;
+import jp.co.sss.test_spring.entity.User;
 import jp.co.sss.test_spring.repository.ReviewRepository;
 
 @Service
@@ -26,5 +27,9 @@ public class ReviewService {
 
     public List<Review> findReviewsByProductId(Long productId) {
         return reviewRepository.findByProductId(productId);
+    }
+    
+    public List<Review> findByUser(User user) {
+        return reviewRepository.findByUser(user);
     }
 }

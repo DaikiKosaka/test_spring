@@ -1,0 +1,123 @@
+header {
+  background-color: #1a1a2e;
+  color: white;
+  padding: 20px 30px;
+}
+
+header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+header nav .user-info {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+header nav div:last-child {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+header nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}	
+
+header nav a:hover {
+  text-decoration: underline;
+}
+
+/* 検索フォーム */
+header form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+  flex-wrap: wrap; /* ← スマホ対応も考慮 */
+}
+
+header input[type="text"],
+header select {
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  min-width: 180px;
+}
+
+header button {
+  padding: 8px 16px;
+  background-color: #ffc107;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+header button:hover {
+  background-color: #e0a800;
+}
+header .search-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  margin-top: 15px;
+}
+.search-btn {
+  background-color: #ffc107 !important; /* ← 黒色 */
+  color: white !important;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 8px 16px;
+  cursor: pointer;
+  height: 38px;
+  white-space: nowrap;
+}
+
+.search-btn:hover {
+  background-color: #555 !important;
+}
+.search-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  margin-top: 15px;
+}
+header .search-form input[type="text"],
+header .search-form select,
+header .search-form .search-btn {
+  height: 38px;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+header .search-btn {
+  height: 38px;
+  padding: 8px 16px;
+  font-size: 14px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  background-color: #ffc107;
+  color: black;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}

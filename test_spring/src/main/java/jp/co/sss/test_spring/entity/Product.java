@@ -18,7 +18,7 @@ public class Product implements Serializable {
     private Integer productId; // 商品ID
 
     private String productName; // 商品名
-    private int price; // 価格
+    private Double price; // 価格
     private Double taxPrice; // 税込価格
     private Integer stock; // 在庫
     private String comment; // コメント
@@ -44,11 +44,11 @@ public class Product implements Serializable {
         this.productName = productName;
     }
 
-    public int getPrice() {
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

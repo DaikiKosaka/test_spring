@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -18,7 +20,10 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer reviewId;
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private Long productId;
     private Integer rating;
     private String comment;
@@ -26,10 +31,10 @@ public class Review {
     private String dummyUserName;
     private String reviewImgPath;
 
-    private LocalDateTime createdDate;  // フィールド名変更
+    private LocalDateTime createdDate;
     private LocalDateTime updatedAt;
 
-    // Getters and Setters
+    // --- ゲッター・セッター ---
     public Integer getReviewId() {
         return reviewId;
     }
@@ -38,12 +43,12 @@ public class Review {
         this.reviewId = reviewId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getProductId() {
@@ -94,7 +99,7 @@ public class Review {
         this.reviewImgPath = reviewImgPath;
     }
 
-    public LocalDateTime getCreatedDate() {  // メソッド名変更
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
@@ -110,11 +115,11 @@ public class Review {
         this.updatedAt = updatedAt;
     }
 
-    // @PrePersist と @PreUpdate メソッドを追加して、作成時・更新時に日時を設定する
+    // ✅ 自動で作成・更新日時を設定
     @PrePersist
     public void onCreate() {
         LocalDateTime now = LocalDateTime.now();
-        this.createdDate = now;  // createdAt -> createdDate
+        this.createdDate = now;
         this.updatedAt = now;
     }
 
@@ -123,4 +128,3 @@ public class Review {
         this.updatedAt = LocalDateTime.now();
     }
 }
-

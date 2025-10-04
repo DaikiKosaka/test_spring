@@ -32,6 +32,7 @@ public class LoginController {
         if (user.isPresent() && user.get().getPassword().equals(password)) {
             // ユーザー名をセッションに保存
             session.setAttribute("user_name", user.get().getUsername());
+            session.setAttribute("loginUser", user.get());
 
             // セッションに保存されたユーザー名の確認
             System.out.println("ログイン後にセッションに保存されたユーザー名: " + session.getAttribute("user_name"));

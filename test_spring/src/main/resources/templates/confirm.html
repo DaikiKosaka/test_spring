@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>購入確認</title>
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+    <link th:href="@{/css/footer.css}" rel="stylesheet">
+    <link th:href="@{/css/confirm.css}" rel="stylesheet">
+</head>
+<body class="confirm-page">
+
+    <!-- ヘッダー -->
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <main>
+        <h1>購入確認</h1>
+
+        <!-- ✅ フォームにクラス追加 -->
+        <form class="confirm-form"
+              th:action="${product != null} ? @{/cart/complete/single} : @{/cart/complete}"
+              method="post">
+
+            <h2>受け取り場所</h2>
+            <div>
+                <label for="name">お名前：</label>
+                <input type="text" id="name" name="name" required />
+            </div>
+            <div>
+                <label for="address">住所：</label>
+                <input type="text" id="address" name="address" required />
+            </div>
+            <div>
+                <label for="apartment">アパート名：</label>
+                <input type="text" id="apartment" name="apartment" />
+            </div>
+
+            <h2>支払い情報</h2>
+            <div>
+                <label for="payment">支払い情報：</label>
+                <input type="text" id="payment" name="payment" required />
+            </div>
+
+            <input type="hidden" name="productId" th:value="${product != null ? product.productId : ''}" />
+            <input type="hidden" name="quantity" th:value="${quantity != null ? quantity : ''}" />
+
+            <div th:if="${product != null}">
+                <h2>単品購入商品</h2>
+                <ul>
+                    <li>
+                        <span>商品名：<strong th:text="${product.productName}"></strong></span><br>
+                        <span>数量：<span th:text="${quantity}"></span></span><br>
+                        <span>価格：<span th:text="${#numbers.formatDecimal(product.price, 0, 0)}"></span>円<br>
+                        <span class="total">合計：<span th:text="${#numbers.formatDecimal(total, 0, 0)}"></span>円</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div th:if="${cartList != null}">
+                <h2>カート内商品</h2>
+                <ul>
+                    <li th:each="cart : ${cartList}">
+                        <span>商品名：<strong th:text="${cart.product != null ? cart.product.productName : '（不明）'}"></strong></span><br>
+                        <span>数量：<span th:text="${cart.quantity}"></span></span><br>
+                        <span>価格：<span th:text="${#numbers.formatDecimal(cart.product.price * 1.1, 0, 0)}"></span>円</span>
+                    </li>
+                </ul>
+                <p class="total">合計：<span th:text="${#numbers.formatDecimal(total, 0, 0)}"></span>円</p>
+
+            </div>
+
+            <!-- ✅ ボタンは confirm-form に限定されたCSSが適用される -->
+            <button type="submit"
+                    th:disabled="${product == null and (#lists.isEmpty(cartList))}"
+                    th:classappend="${product == null and (#lists.isEmpty(cartList))} ? 'disabled-btn' : ''">
+                確認
+            </button>
+
+            <div th:if="${product == null and (#lists.isEmpty(cartList))}"
+                 class="no-product-message">
+                商品が選択されていません。
+            </div>
+        </form>
+    </main>
+
+    <!-- フッター -->
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</body>
+</html>
