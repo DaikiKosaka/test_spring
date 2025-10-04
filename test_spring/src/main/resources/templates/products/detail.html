@@ -226,7 +226,7 @@
                     <p>コメント: <span th:text="${review.comment}"></span></p>
                     <p>評価:
                         <span th:each="star : ${#numbers.sequence(1, 5)}">
-                            <span th:text="${star <= review.rating ? '★' : '☆'}"></span>
+                            <span th:text="${star <= review.rating ? '★' : '☆'}"></span> 
                         </span>
                     </p>
                     <img th:if="${review.reviewImgPath != null}" 
