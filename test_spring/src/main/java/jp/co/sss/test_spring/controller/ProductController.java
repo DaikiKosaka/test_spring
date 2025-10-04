@@ -98,7 +98,7 @@ public class ProductController {
                 BigDecimal discountRate = firstItem.getDiscountRate();
                 BigDecimal discountMultiplier = BigDecimal.ONE.subtract(discountRate.divide(BigDecimal.valueOf(100)));
                 BigDecimal discountedPrice = price.multiply(discountMultiplier);
-                product.setPrice(discountedPrice.doubleValue()); // 型合わせ済み
+                product.setPrice(discountedPrice.doubleValue());
             }
         }
 

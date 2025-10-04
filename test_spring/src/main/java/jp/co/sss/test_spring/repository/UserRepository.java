@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import jp.co.sss.test_spring.entity.User;
 
-
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);

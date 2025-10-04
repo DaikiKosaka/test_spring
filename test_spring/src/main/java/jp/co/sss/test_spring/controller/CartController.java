@@ -37,7 +37,6 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    // カート画面を表示
     @GetMapping
     public String showCart(HttpSession session, Model model) {
         List<Cart> cartList = cartService.getCart(session);
@@ -58,7 +57,6 @@ public class CartController {
         return "cart";
     }
 
-    // 商品をカートに追加
     @PostMapping("/{productId}/add-to-cart")
     public String addProductToCart(@PathVariable Long productId, @RequestParam(defaultValue = "1") int quantity, HttpSession session) {
         try {
@@ -69,14 +67,12 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    // 購入フォームを表示（旧）
     @GetMapping("/purchase")
     public String showPurchaseForm(HttpSession session, Model model) {
         model.addAttribute("cartProducts", cartService.getCart(session));
         return "purchase_form";
     }
 
-    // カート詳細ページを表示
     @GetMapping("/cart_detail")
     public String showCartDetail(HttpSession session, Model model) {
         List<Cart> cartList = cartService.getCart(session);
@@ -90,21 +86,18 @@ public class CartController {
                 totalPrice += price * quantity;
             }
         }
-
         model.addAttribute("cartProducts", cartList);
         model.addAttribute("totalPrice", totalPrice);
 
         return "cart/cart_detail";
     }
 
-    // カートから商品削除
     @DeleteMapping("/delete/{cartId}")
     public ResponseEntity<String> deleteCartItem(@PathVariable Long cartId, HttpSession session) {
         cartService.removeFromCartByCartId(cartId, session);
         return ResponseEntity.ok("削除成功");
     }
 
-    // ✅ 単品購入確認画面（productIdとquantityを受け取る）
     @GetMapping("/confirm")
     public String confirmCart(@RequestParam(required = false) Long productId,
                               @RequestParam(required = false) Integer quantity,
@@ -131,7 +124,6 @@ public class CartController {
         return "confirm";
     }
 
-    // ✅ カート購入時の購入確定画面（POST）
     @PostMapping("/complete")
     public String completePurchase(
             @RequestParam String name,
@@ -160,7 +152,6 @@ public class CartController {
         return "cart/complete";
     }
 
-    // ✅ カート購入時の購入確定画面（GET）
     @GetMapping("/complete")
     public String showCompletePage(HttpSession session, Model model) {
         model.addAttribute("name", session.getAttribute("name"));
@@ -177,7 +168,6 @@ public class CartController {
         return "cart/complete";
     }
 
-    // ✅ 単品購入時の購入確定画面（POST）
     @PostMapping("/complete/single")
     public String completeSinglePurchase(
             @RequestParam String name,
@@ -210,7 +200,6 @@ public class CartController {
                 model.addAttribute("totalPrice", product.getPrice() * quantity);
             }
         }
-
         return "cart/complete";
     }
 

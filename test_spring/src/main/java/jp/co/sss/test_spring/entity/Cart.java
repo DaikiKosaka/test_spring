@@ -18,7 +18,7 @@ public class Cart implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // 自動採番
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cartId;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -29,7 +29,6 @@ public class Cart implements Serializable {
 
     private Long userId;
 
-    // --- Getter/Setter ---
     public Long getCartId() {
         return cartId;
     }

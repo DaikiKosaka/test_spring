@@ -8,7 +8,6 @@ import jp.co.sss.test_spring.entity.Review;
 import jp.co.sss.test_spring.entity.User;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    // 商品IDで口コミを検索
     List<Review> findByProductId(Long productId);
     List<Review> findByUser(User user);
 }

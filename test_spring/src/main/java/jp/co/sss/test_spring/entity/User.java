@@ -13,12 +13,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "users") // users テーブルに対応
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id") // テーブルのカラム名と一致させる
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "user_name")

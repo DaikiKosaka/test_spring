@@ -67,12 +67,10 @@
     <main>
     <h1>商品一覧画面</h1>
 
-    <!-- 検索結果がある場合 -->
     <div th:if="${#lists.isEmpty(products)}" class="no-result">
         <p>検索結果が見つかりませんでした。</p>
     </div>
 
-    <!-- 検索結果のリスト -->
     <div th:if="${not #lists.isEmpty(products)}">
         <ul>
             <li th:each="product : ${products}">

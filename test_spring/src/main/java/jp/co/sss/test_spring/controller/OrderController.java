@@ -41,7 +41,7 @@ public class OrderController {
     private CartService cartService;
 
     @Autowired
-    private ProductService productService; // ✅ 在庫減少用サービス
+    private ProductService productService;
 
     @PostMapping("/orders/finalize")
     public String finalizeOrder(
@@ -122,7 +122,6 @@ public class OrderController {
                         .path(cleanPath)
                         .toUriString();
                 imageUrls.add(imageUrl);
-                System.out.println("✅ 画像URL生成: " + imageUrl);
             }
         }
 

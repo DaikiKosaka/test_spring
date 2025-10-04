@@ -4,7 +4,7 @@
   text-align: center;
   padding: 20px 0;
   font-size: 14px;
-  margin: 0; /* ← 念のため余白を除去 */
+  margin: 0;
 }
 
 .footer p {
@@ -31,5 +31,5 @@ main {
 }
 
 .footer {
-  margin-top: auto; /* ← これがポイント！ */
+  margin-top: auto;
 }

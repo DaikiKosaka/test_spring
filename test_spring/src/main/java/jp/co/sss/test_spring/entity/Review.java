@@ -34,7 +34,7 @@ public class Review {
     private LocalDateTime createdDate;
     private LocalDateTime updatedAt;
 
-    // --- ゲッター・セッター ---
+    // --- Getter / Setter ---
     public Integer getReviewId() {
         return reviewId;
     }
@@ -115,7 +115,6 @@ public class Review {
         this.updatedAt = updatedAt;
     }
 
-    // ✅ 自動で作成・更新日時を設定
     @PrePersist
     public void onCreate() {
         LocalDateTime now = LocalDateTime.now();

@@ -15,19 +15,19 @@ public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer productId; // 商品ID
+    private Integer productId;
 
-    private String productName; // 商品名
-    private Double price; // 価格
-    private Double taxPrice; // 税込価格
-    private Integer stock; // 在庫
-    private String comment; // コメント
-    private String imgPath; // 画像パス
-    private Integer companyId; // 会社ID
-    private Integer categoryId; // カテゴリID
-    private Boolean includeTax; // 税込みフラグ
+    private String productName;
+    private Double price;
+    private Double taxPrice;
+    private Integer stock;
+    private String comment;
+    private String imgPath;
+    private Integer companyId;
+    private Integer categoryId;
+    private Boolean includeTax;
 
-    // ゲッターとセッター
+    // --- Getter / Setter ---
     public Integer getProductId() {
         return productId;
     }

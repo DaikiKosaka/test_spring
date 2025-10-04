@@ -15,7 +15,6 @@ public class UserService {
     }
 
     public User authenticate(String username, String password) {
-        // ユーザー名とパスワードを使って認証するロジック
         return userRepository.findByUsernameAndPassword(username, password);
     }
 }

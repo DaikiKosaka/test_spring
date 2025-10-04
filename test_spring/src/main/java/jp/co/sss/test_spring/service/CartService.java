@@ -17,7 +17,6 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
 
-    // カートに商品を追加
     @SuppressWarnings("unchecked")
     public void addToCart(Long productId, int quantity, HttpSession session) {
         Product product = productRepository.findById(productId).orElse(null);
@@ -37,16 +36,15 @@ public class CartService {
         }
 
         Cart newCart = new Cart();
-        newCart.setCartId(System.currentTimeMillis()); // 一時的にcartIdをセット
+        newCart.setCartId(System.currentTimeMillis());
         newCart.setProduct(product);
         newCart.setQuantity(quantity);
-        newCart.setUserId((long) 1); // 仮に固定
+        newCart.setUserId((long) 1);
         cartList.add(newCart);
 
         session.setAttribute("cart", cartList);
     }
 
-    // カート内の商品一覧を取得
     @SuppressWarnings("unchecked")
     public List<Cart> getCart(HttpSession session) {
         List<Cart> cartList = (List<Cart>) session.getAttribute("cart");
@@ -56,7 +54,6 @@ public class CartService {
         return cartList;
     }
 
-    // cartIdで商品を削除
     @SuppressWarnings("unchecked")
     public void removeFromCartByCartId(Long cartId, HttpSession session) {
         List<Cart> cartList = (List<Cart>) session.getAttribute("cart");
@@ -75,7 +72,6 @@ public class CartService {
         }
     }
 
-    // カート内の商品リストを取得
     public List<Product> getCartItems(HttpSession session) {
         List<Cart> cartList = getCart(session);
         List<Product> products = new ArrayList<>();
@@ -87,7 +83,6 @@ public class CartService {
         return products;
     }
 
-    // カートの合計金額を計算（税金込み）
     public double calculateCartTotal(List<Cart> cartList) {
         double total = 0;
         for (Cart cart : cartList) {
@@ -95,12 +90,10 @@ public class CartService {
             int quantity = cart.getQuantity();
             total += product.getPrice() * quantity;
         }
-        return total * 1.1; // 消費税を加算
+        return total * 1.1;
     }
 
-    // ユーザーIDに基づくカートアイテムを取得（実装が必要）
     public List<Cart> getCartItemsByUserId(Integer userId) {
-        // TODO: ユーザーIDに基づいてカートアイテムを取得する実装
         return null;
     }
 }

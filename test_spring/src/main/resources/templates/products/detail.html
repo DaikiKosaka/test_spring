@@ -1,243 +1,244 @@
-	<!DOCTYPE html>
-	<html xmlns:th="http://www.thymeleaf.org">
-	<head>
-	    <meta charset="UTF-8">
-	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <link th:href="@{/css/header.css}" rel="stylesheet">
-	    <link th:href="@{/css/footer.css}" rel="stylesheet">
-	    <title>商品詳細</title>
-	    <style>
-	body {
-	    display: flex;
-	    flex-direction: column;
-	    min-height: 100vh;
-	    margin: 0;
-	    padding: 0; /* ← 余白を完全に除去 */
-	    font-family: "Helvetica Neue", sans-serif;
-	    background-color: #f9f9f9;
-	}
-	
-	        h1 {
-	            text-align: center;
-	            margin-bottom: 30px;
-	            color: #333;
-	        }
-	
-	        .product-container {
-	            display: flex;
-	            flex-wrap: wrap;
-	            gap: 40px;
-	            justify-content: center;
-	            margin-bottom: 40px;
-	        }
-	
-	        .product-info {
-	            flex: 1 1 300px;
-	            max-width: 500px;
-	        }
-	
-	        .product-info img {
-	            width: 100%;
-	            max-width: 300px;
-	            height: auto;
-	            border-radius: 6px;
-	            margin-top: 10px;
-	        }
-	
-	        .purchase-section {
-	            flex: 1 1 250px;
-	            max-width: 300px;
-	            background-color: #fff;
-	            padding: 20px;
-	            border-radius: 8px;
-	            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-	        }
-	
-	        .purchase-section form {
-	            margin-bottom: 15px;
-	        }
-	
-	        input[type="number"] {
-	            width: 100%;
-	            padding: 8px;
-	            margin-top: 5px;
-	            margin-bottom: 10px;
-	            border: 1px solid #ccc;
-	            border-radius: 4px;
-	        }
-	
-.purchase-section button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 15px;
-    cursor: pointer;
-}
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/header.css}" rel="stylesheet">
+    <link th:href="@{/css/footer.css}" rel="stylesheet">
+    <title>商品詳細</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", sans-serif;
+            background-color: #f9f9f9;
+        }
 
-	        button:disabled {
-	            background-color: #ccc;
-	            cursor: not-allowed;
-	        }
-	
-	        .disabled-form {
-	            opacity: 0.6;
-	        }
-	
-	        .disabled-form button {
-	            background-color: #ccc;
-	            color: #666;
-	            cursor: not-allowed;
-	        }
-	
-	        .disabled-form input {
-	            background-color: #eee;
-	            color: #666;
-	        }
-	
-	        .review-section {
-	            max-width: 800px;
-	            margin: 0 auto;
-	        }
-	
-	        .review-section ul {
-	            list-style: none;
-	            padding: 0;
-	        }
-	
-	        .review-section li {
-	            background-color: #fff;
-	            padding: 15px;
-	            margin-bottom: 20px;
-	            border-radius: 8px;
-	            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-	        }
-	
-	        .review-section img {
-	            max-width: 200px;
-	            height: auto;
-	            margin-top: 8px;
-	            border-radius: 4px;
-	        }
-	
-	        .review-section p {
-	            margin: 6px 0;
-	            color: #555;
-	        }
-	
-	        .review-section strong {
-	            color: #333;
-	        }
-	
-	        a {
-	            display: block;
-	            text-align: center;
-	            margin-top: 30px;
-	            color: #007bff;
-	            text-decoration: none;
-	        }
-	
-	        a:hover {
-	            text-decoration: underline;
-	        }
-	    </style>
-	    <script>
-	        function addToCart() {
-	            alert("カートに追加しました");
-	            window.location.href = '/cart';
-	        }
-	
-	        function checkStockAvailability() {
-	            const quantity = parseInt(document.getElementById("quantity").value);
-	            const stock = parseInt(document.getElementById("stock").textContent);
-	
-	            if (quantity > stock) {
-	                alert("在庫数を超える数量はカートに追加できません。");
-	                return false;
-	            }
-	            return true;
-	        }
-	    </script>
-	</head>
-	<body>
-	    <th:block th:replace="~{fragments/header :: header}"></th:block>
-	<main>
-	    <h1>商品詳細</h1>
-	
-	    <div class="product-container">
-	        <!-- 商品情報表示 -->
-	        <div class="product-info">
-	            <h2 th:text="${product.productName}">商品名が表示されます</h2>
-	
-	<p>
-    価格: 
-    <th:block th:if="${!#lists.isEmpty(saleItems)}">
-        <span th:if="${saleItems[0].discountedPrice != null}" 
-              th:text="${#numbers.formatDecimal(saleItems[0].discountedPrice, 0, 0)}"></span>
-        <span th:if="${saleItems[0].discountedPrice == null}" 
-              th:text="${#numbers.formatDecimal(product.price, 0, 0)}"></span>
-    </th:block>
-    <th:block th:if="${#lists.isEmpty(saleItems)}">
-        <span th:text="${#numbers.formatDecimal(product.price, 0, 0)}"></span>
-    </th:block>
-    円
-</p>
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
 
-	
-	           <p>税抜き価格: <span th:text="${#numbers.formatDecimal(product.taxPrice, 0, 0)}"></span>円</p>
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
 
-	            <p>在庫: <span id="stock" th:text="${product.stock}"></span>個</p>
-	            <p>コメント: <span th:text="${product.comment}"></span></p>
-	            <img th:src="@{${product.imgPath}}" th:alt="${product.productName}">
-	            <p><a th:href="@{/products}">商品一覧</a></p>
-	        </div>
-	
-	        <!-- 購入とカートボタン -->
-	        <div class="purchase-section">
-	            <form th:action="@{/cart/{id}/add-to-cart(id=${product.productId})}" method="post"
-	                  onsubmit="return checkStockAvailability()"
-	                  th:classappend="${product.stock == 0} ? 'disabled-form'">
-	                <label for="quantity">数量:</label>
-	                <input type="number" id="quantity" name="quantity" value="1" min="1"
-	                       th:attr="max=${product.stock}" th:disabled="${product.stock == 0}" required>
-	                <button type="submit" th:disabled="${product.stock == 0}">カートに追加</button>
-	            </form>
-	
-	            <form th:action="@{/cart/confirm}" method="get">
-	                <input type="hidden" name="productId" th:value="${product.productId}" />
-	                <input type="hidden" name="quantity" value="1" />
-	                <button type="submit" th:disabled="${product.stock == 0}">単品購入</button>
-	            </form>
-	
-	            <p th:if="${product.stock == 0}" style="color: red; margin-top: 8px;">
-	                在庫切れのため購入できません
-	            </p>
-	        </div>
-	    </div>
-	
-	    <!-- 口コミ情報の表示 -->
-	    <div class="review-section" th:if="${reviews != null and !#lists.isEmpty(reviews)}">
-	        <ul>
-	            <li th:each="review : ${reviews}">
-	                <strong th:text="${review.dummyUserName}">ユーザー名</strong>
-	                <p>投稿日: <span th:text="${#temporals.format(review.createdDate, 'yyyy-MM-dd')}"></span></p>
-	                <p>コメント: <span th:text="${review.comment}"></span></p>
-	                <p>評価:
-	                    <span th:each="star : ${#numbers.sequence(1, 5)}">
-	                        <span th:text="${star <= review.rating ? '★' : '☆'}"></span>
-	                    </span>
-	                </p>
-	                <img th:if="${review.reviewImgPath != null}" 
-	                     th:src="@{${review.reviewImgPath}}" 
-	                     alt="口コミ画像" />
-	            </li>
-	        </ul>
-	    </div>
-	
-	    <a th:href="@{/products/{productId}/reviews/new(productId=${product.productId})}">口コミを投稿</a>
-	    </main>
-	    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
-	</body>
-	</html>
+        .product-info {
+            flex: 1 1 300px;
+            max-width: 500px;
+        }
+
+        .product-info img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        .purchase-section {
+            flex: 1 1 250px;
+            max-width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .purchase-section form {
+            margin-bottom: 15px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .purchase-section button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .disabled-form {
+            opacity: 0.6;
+        }
+
+        .disabled-form button {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .disabled-form input {
+            background-color: #eee;
+            color: #666;
+        }
+
+        .review-section {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .review-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .review-section li {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .review-section img {
+            max-width: 200px;
+            height: auto;
+            margin-top: 8px;
+            border-radius: 4px;
+        }
+
+        .review-section p {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .review-section strong {
+            color: #333;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 30px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function addToCart() {
+            alert("カートに追加しました");
+            window.location.href = '/cart';
+        }
+
+        function checkStockAvailability() {
+            const quantity = parseInt(document.getElementById("quantity").value);
+            const stock = parseInt(document.getElementById("stock").textContent);
+
+            if (quantity > stock) {
+                alert("在庫数を超える数量はカートに追加できません。");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+
+    <main>
+        <h1>商品詳細</h1>
+
+        <div class="product-container">
+            <div class="product-info">
+                <h2 th:text="${product.productName}">商品名が表示されます</h2>
+
+                <p>
+                    価格: 
+                    <th:block th:if="${!#lists.isEmpty(saleItems)}">
+                        <span th:if="${saleItems[0].discountedPrice != null}" 
+                              th:text="${#numbers.formatDecimal(saleItems[0].discountedPrice, 0, 0)}"></span>
+                        <span th:if="${saleItems[0].discountedPrice == null}" 
+                              th:text="${#numbers.formatDecimal(product.price, 0, 0)}"></span>
+                    </th:block>
+                    <th:block th:if="${#lists.isEmpty(saleItems)}">
+                        <span th:text="${#numbers.formatDecimal(product.price, 0, 0)}"></span>
+                    </th:block>
+                    円 
+                </p>
+
+                <p th:if="${!#lists.isEmpty(saleItems)}" style="color: red; font-weight: bold;">
+                    セール対象商品です！
+                </p>
+
+                <p>税抜き価格: <span th:text="${#numbers.formatDecimal(product.taxPrice, 0, 0)}"></span>円</p>
+                <p>在庫: <span id="stock" th:text="${product.stock}"></span>個</p>
+                <p>コメント: <span th:text="${product.comment}"></span></p>
+                <img th:src="@{${product.imgPath}}" th:alt="${product.productName}">
+                <p><a th:href="@{/products}">商品一覧</a></p>
+            </div>
+
+            <div class="purchase-section">
+                <form th:action="@{/cart/{id}/add-to-cart(id=${product.productId})}" method="post"
+                      onsubmit="return checkStockAvailability()"
+                      th:classappend="${product.stock == 0} ? 'disabled-form'">
+                    <label for="quantity">数量:</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1"
+                           th:attr="max=${product.stock}" th:disabled="${product.stock == 0}" required>
+                    <button type="submit" th:disabled="${product.stock == 0}">カートに追加</button>
+                </form>
+
+                <form th:action="@{/cart/confirm}" method="get">
+                    <input type="hidden" name="productId" th:value="${product.productId}" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" th:disabled="${product.stock == 0}">単品購入</button>
+                </form>
+
+                <p th:if="${product.stock == 0}" style="color: red; margin-top: 8px;">
+                    在庫切れのため購入できません
+                </p>
+            </div>
+        </div>
+
+        <div class="review-section" th:if="${reviews != null and !#lists.isEmpty(reviews)}">
+            <ul>
+                <li th:each="review : ${reviews}">
+                    <strong th:text="${review.dummyUserName}">ユーザー名</strong>
+                    <p>投稿日: <span th:text="${#temporals.format(review.createdDate, 'yyyy-MM-dd')}"></span></p>
+                    <p>コメント: <span th:text="${review.comment}"></span></p>
+                    <p>評価:
+                        <span th:each="star : ${#numbers.sequence(1, 5)}">
+                            <span th:text="${star <= review.rating ? '★' : '☆'}"></span>
+                        </span>
+                    </p>
+                    <img th:if="${review.reviewImgPath != null}" 
+                         th:src="@{${review.reviewImgPath}}" 
+                         alt="口コミ画像" />
+                </li>
+            </ul>
+        </div>
+
+        <a th:href="@{/products/{productId}/reviews/new(productId=${product.productId})}">口コミを投稿</a>
+    </main>
+
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</body>
+</html>

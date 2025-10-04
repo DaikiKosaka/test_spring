@@ -101,18 +101,13 @@
 
 <form th:action="@{/products/{productId}/reviews(productId=${productId})}" method="post" enctype="multipart/form-data">
 
-
-
-    <!-- CSRFトークン -->
     <input type="hidden" name="_csrf" value="${_csrf.token}" />
 
-    <!-- ユーザー名（任意） -->
     <div>
         <label for="dummyUserName">ユーザー名（任意）:</label>
         <input type="text" id="dummyUserName" name="dummyUserName" />
     </div>
 
-    <!-- 評価（1〜5） -->
     <div>
         <label for="rating">評価（1〜5）:</label>
         <select id="rating" name="rating">
@@ -124,30 +119,25 @@
         </select>
     </div>
 
-    <!-- メールアドレス -->
     <div>
         <label for="email">メールアドレス:</label>
         <input type="email" id="email" name="email" required />
     </div>
 
-    <!-- コメント -->
     <div>
         <label for="comment">コメント:</label>
         <textarea id="comment" name="comment" rows="5" required></textarea>
     </div>
 
-    <!-- 画像 -->
     <div>
         <label for="reviewImg">画像:</label>
         <input type="file" id="reviewImg" name="reviewImg" accept="image/*" />
     </div>
 
-    <!-- 投稿ボタン -->
     <div>
         <button type="submit">投稿</button>
     </div>
 </form>
-
 
 </body>
 </html>

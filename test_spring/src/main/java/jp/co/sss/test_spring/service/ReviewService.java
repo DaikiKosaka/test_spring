@@ -20,7 +20,6 @@ public class ReviewService {
     }
 
     public void saveReview(Long productId, Review review) {
-        // productIdをセットしてからレビューを保存
         review.setProductId(productId);
         reviewRepository.save(review);
     }

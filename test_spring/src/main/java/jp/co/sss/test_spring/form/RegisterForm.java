@@ -6,7 +6,7 @@ public class RegisterForm {
     private String password;
     private String confirmPassword;
 
-    // ゲッターとセッター
+    // --- Getter / Setter ---
     public String getUsername() {
         return username;
     }

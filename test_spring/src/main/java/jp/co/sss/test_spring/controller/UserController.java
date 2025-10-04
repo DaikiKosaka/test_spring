@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping
     public String showMyPage(HttpSession session, Model model) {
     	User user = (User) session.getAttribute("loginUser");
-    	System.out.println("セッションユーザー: " + user); // ← ここで確認
+    	System.out.println("セッションユーザー: " + user); 
     	if (user == null) {
     	    return "redirect:/login";
     	}

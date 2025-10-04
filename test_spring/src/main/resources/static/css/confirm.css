@@ -1,5 +1,5 @@
 .confirm-page main {
-  max-width: 1000px; /* ← 800px → 1000px に拡張 */
+  max-width: 1000px;
   margin: 0 auto;
   padding: 60px 40px;
   background-color: #fff;
@@ -8,7 +8,6 @@
   font-family: "Helvetica Neue", sans-serif;
 }
 
-/* タイトル */
 .confirm-page h1 {
   font-size: 28px;
   text-align: center;
@@ -16,7 +15,6 @@
   color: #333;
 }
 
-/* セクション見出し */
 .confirm-page h2 {
   font-size: 20px;
   margin-top: 30px;
@@ -26,7 +24,6 @@
   padding-bottom: 5px;
 }
 
-/* ラベルと入力欄の整列 */
 .confirm-form > div {
   display: flex;
   align-items: center;
@@ -41,7 +38,7 @@
 
 .confirm-form input[type="text"] {
   flex: 1;
-  min-width: 300px; /* ← 横幅の最小値を広げる */
+  min-width: 300px;
   padding: 8px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -65,7 +62,6 @@
   line-height: 1.6;
 }
 
-/* 合計金額 */
 .confirm-page .total {
   font-weight: bold;
   font-size: 16px;
@@ -74,7 +70,6 @@
   text-align: right;
 }
 
-/* ✅ 確認ボタン（フォームに限定） */
 .confirm-form button[type="submit"] {
   display: block;
   width: 100%;
@@ -93,27 +88,26 @@
   background-color: #218838;
 }
 
-/* 無効ボタン */
 .confirm-form .disabled-btn {
   background-color: #ccc !important;
   color: #666 !important;
   cursor: not-allowed !important;
 }
 
-/* 商品未選択メッセージ */
 .confirm-page .no-product-message {
   text-align: center;
   color: #999;
   margin-top: 20px;
   font-size: 16px;
 }
+
 .confirm-form {
   padding: 30px 40px;
   margin-top: 20px;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  width: 100%; /* ← 横幅いっぱいに広げる */
+  width: 100%;
   box-sizing: border-box;
 }
 body {
@@ -121,7 +115,7 @@ body {
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
-    padding: 0; /* ← paddingはmainに移動しましょう */
+    padding: 0;
     font-family: "Helvetica Neue", sans-serif;
     background-color: #f9f9f9;
 }

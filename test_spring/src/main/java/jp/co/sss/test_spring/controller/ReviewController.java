@@ -58,7 +58,6 @@ public class ReviewController {
                                    .toString()
                                    .replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
 
-            // ✅ 保存先をユーザーのホームディレクトリに変更
             String uploadDir = System.getProperty("user.home") + "/uploaded_images";
             Path uploadPath = Paths.get(uploadDir);
             Files.createDirectories(uploadPath);

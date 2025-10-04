@@ -11,9 +11,9 @@ import jp.co.sss.test_spring.entity.Cart;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
-    List<Cart> findByUserId(Integer userId);  // ユーザーIDでカートアイテムを取得
+    List<Cart> findByUserId(Integer userId);
 
-    Optional<Cart> findByUserIdAndProductId(Long userId, Long productId);  // ユーザーIDと商品IDでカートアイテムを取得
+    Optional<Cart> findByUserIdAndProductId(Long userId, Long productId);
 
-    void deleteByUserIdAndProductId(Long userId, Long productId);  // ユーザーIDと商品IDでカートアイテムを削除
+    void deleteByUserIdAndProductId(Long userId, Long productId);
 }

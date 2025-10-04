@@ -25,7 +25,6 @@ public class OrderItem {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    // ✅ 商品情報を即時取得できるように
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id")
     private Product product;
@@ -97,7 +96,6 @@ public class OrderItem {
         this.updatedAt = updatedAt;
     }
 
-    // --- デバッグ用 toString（任意） ---
     @Override
     public String toString() {
         return "OrderItem{" +

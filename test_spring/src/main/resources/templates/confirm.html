@@ -9,13 +9,11 @@
 </head>
 <body class="confirm-page">
 
-    <!-- ヘッダー -->
     <th:block th:replace="~{fragments/header :: header}"></th:block>
 
     <main>
         <h1>購入確認</h1>
 
-        <!-- ✅ フォームにクラス追加 -->
         <form class="confirm-form"
               th:action="${product != null} ? @{/cart/complete/single} : @{/cart/complete}"
               method="post">
@@ -68,7 +66,6 @@
 
             </div>
 
-            <!-- ✅ ボタンは confirm-form に限定されたCSSが適用される -->
             <button type="submit"
                     th:disabled="${product == null and (#lists.isEmpty(cartList))}"
                     th:classappend="${product == null and (#lists.isEmpty(cartList))} ? 'disabled-btn' : ''">
@@ -82,7 +79,6 @@
         </form>
     </main>
 
-    <!-- フッター -->
     <th:block th:replace="~{fragments/footer :: footer}"></th:block>
 </body>
 </html>

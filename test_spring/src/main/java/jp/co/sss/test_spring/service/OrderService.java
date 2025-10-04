@@ -42,7 +42,6 @@ public class OrderService {
 
         orderRepository.save(order);
 
-        // ✅ OrderItem をリストに追加して Order にセットする
         List<OrderItem> orderItemList = new ArrayList<>();
 
         for (Cart cart : cartList) {
@@ -58,10 +57,9 @@ public class OrderService {
             item.setUpdatedAt(LocalDateTime.now());
 
             orderItemRepository.save(item);
-            orderItemList.add(item); // ✅ リストに追加
+            orderItemList.add(item);
         }
-
-        order.setOrderItems(orderItemList); // ✅ Order にセット
+        order.setOrderItems(orderItemList);
 
         return order;
     }

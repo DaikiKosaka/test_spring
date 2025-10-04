@@ -30,12 +30,10 @@ public class Category {
     @Column(name = "description")
     private String description;
 
-    // 代表商品（任意）→ LAZYで安全に
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
-    // 親カテゴリー（自己参照）→ LAZYで安全に
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parentCategory;
@@ -48,7 +46,6 @@ public class Category {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // ✅ 無限ループ防止のため、toString() は限定的に
     @Override
     public String toString() {
         return "Category{" +
@@ -58,7 +55,6 @@ public class Category {
     }
 
     // ✅ Getter / Setter
-
     public Long getCategoryId() {
         return categoryId;
     }
