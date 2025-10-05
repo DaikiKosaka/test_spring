@@ -18,11 +18,13 @@
               th:action="${product != null} ? @{/cart/complete/single} : @{/cart/complete}"
               method="post">
 
-            <h2>受け取り場所</h2>
-            <div>
-                <label for="name">お名前：</label>
-                <input type="text" id="name" name="name" required />
-            </div>
+<h2>受け取り場所</h2>
+<div>
+    <label>ユーザー名：</label><br>
+    <span th:text="${user_name}">ログインユーザー名が表示されます</span>
+    <input type="hidden" name="name" th:value="${user_name}" />
+</div>
+
             <div>
                 <label for="address">住所：</label>
                 <input type="text" id="address" name="address" required />
@@ -32,10 +34,16 @@
                 <input type="text" id="apartment" name="apartment" />
             </div>
 
-            <h2>支払い情報</h2>
+            <h2>お支払い情報</h2>
+            <input type="hidden" name="payment" value="クレジットカード" />
+
             <div>
-                <label for="payment">支払い情報：</label>
-                <input type="text" id="payment" name="payment" required />
+                <label for="cardNumber">カード番号：</label><br>
+                <input type="text" id="cardNumber" name="cardNumber" required />
+            </div>
+            <div>
+                <label for="expiry">有効期限 MM/YY：</label><br>
+                <input type="text" id="expiry" name="expiry" required />
             </div>
 
             <input type="hidden" name="productId" th:value="${product != null ? product.productId : ''}" />

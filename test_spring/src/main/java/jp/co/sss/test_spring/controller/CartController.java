@@ -19,6 +19,7 @@ import jp.co.sss.test_spring.entity.Product;
 import jp.co.sss.test_spring.service.CartService;
 import jp.co.sss.test_spring.service.OrderService;
 import jp.co.sss.test_spring.service.ProductService;
+import jp.co.sss.test_spring.service.UserService;
 
 @Controller
 @RequestMapping("/cart")
@@ -31,6 +32,9 @@ public class CartController {
 
     @Autowired
     private ProductService productService;
+    
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public CartController(CartService cartService) {
@@ -103,6 +107,13 @@ public class CartController {
                               @RequestParam(required = false) Integer quantity,
                               HttpSession session,
                               Model model) {
+
+        // セッションから user_name を取得
+        String userName = (String) session.getAttribute("user_name");
+        if (userName == null) {
+            userName = "未ログイン";
+        }
+        model.addAttribute("user_name", userName);
 
         if (productId != null && quantity != null) {
             Product product = productService.findProductById(productId);
@@ -202,5 +213,4 @@ public class CartController {
         }
         return "cart/complete";
     }
-
 }

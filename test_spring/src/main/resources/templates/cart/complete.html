@@ -6,15 +6,15 @@
     <link th:href="@{/css/header.css}" rel="stylesheet">
     <link th:href="@{/css/footer.css}" rel="stylesheet">
     <style>
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-    font-family: "Helvetica Neue", sans-serif;
-    background-color: #f9f9f9;
-}
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", sans-serif;
+            background-color: #f9f9f9;
+        }
 
         h1 {
             text-align: center;
@@ -78,40 +78,59 @@ body {
         form:last-of-type button:hover {
             background-color: #0056b3;
         }
+
+        .disabled-btn {
+            background-color: #ccc !important;
+            color: #666 !important;
+            cursor: not-allowed !important;
+            opacity: 0.6;
+        }
+
+        .no-product-message {
+            text-align: center;
+            color: #999;
+            margin-top: 20px;
+            font-size: 15px;
+        }
     </style>
 </head>
 
 <body>
-	<th:block th:replace="~{fragments/header :: header}"></th:block>
-<main>
-    <h1>ご購入を確定しますか？</h1>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
 
-    <div class="info">
-        <h2>購入者情報</h2>
-        <p>お名前：<span th:text="${name}">山田 太郎</span></p>
-        <p>住所：<span th:text="${address}">東京都港区</span></p>
-        <p>アパート名：<span th:text="${apartment}">サンシャインA-101</span></p>
-        <p>支払い情報：<span th:text="${payment}">クレジットカード</span></p>
-    </div>
+    <main>
+        <h1>ご購入を確定しますか？</h1>
 
-    <div class="actions">
-        <!-- 編集ボタン -->
-        <form th:action="@{/cart/cart_detail}" method="get">
-            <button type="submit">編集する</button>
-        </form>
+        <div class="info">
+            <h2>購入者情報</h2>
+            <p>お名前：<span th:text="${name}">山田 太郎</span></p>
+            <p>住所：<span th:text="${address}">東京都港区</span></p>
+            <p>アパート名：<span th:text="${apartment}">サンシャインA-101</span></p>
+            <p>支払い情報：<span th:text="${payment}">クレジットカード</span></p>
+        </div>
 
-        <!-- 購入確定フォーム -->
-        <form th:action="@{/order/orders/finalize}" method="post">
-            <input type="hidden" name="name" th:value="${name}" />
-            <input type="hidden" name="address" th:value="${address}" />
-            <input type="hidden" name="apartment" th:value="${apartment}" />
-            <input type="hidden" name="payment" th:value="${payment}" />
-            <input type="hidden" name="productId" th:value="${productId}" />
-            <input type="hidden" name="quantity" th:value="${quantity}" />
-            <button type="submit">購入確定</button>
-        </form>
-    </div>
+        <div class="actions">
+            <form th:action="@{/cart/cart_detail}" method="get">
+                <button type="submit">編集する</button>
+            </form>
+
+            <form th:action="@{/order/orders/finalize}" method="post">
+                <input type="hidden" name="name" th:value="${name}" />
+                <input type="hidden" name="address" th:value="${address}" />
+                <input type="hidden" name="apartment" th:value="${apartment}" />
+                <input type="hidden" name="payment" th:value="${payment}" />
+                <input type="hidden" name="productId" th:value="${productId}" />
+                <input type="hidden" name="quantity" th:value="${quantity}" />
+
+                <button type="submit"
+                        th:disabled="${productId == null and (quantity == null or quantity == 0)}"
+                        th:classappend="${productId == null and (quantity == null or quantity == 0)} ? 'disabled-btn' : ''">
+                    購入確定
+                </button>
+            </form>
+        </div>
     </main>
+
     <th:block th:replace="~{fragments/footer :: footer}"></th:block>
 </body>
 </html>
