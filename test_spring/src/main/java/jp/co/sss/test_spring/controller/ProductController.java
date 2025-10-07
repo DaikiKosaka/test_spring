@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import jp.co.sss.test_spring.entity.Product;
-import jp.co.sss.test_spring.entity.Review;
 import jp.co.sss.test_spring.entity.SalesItem;
+import jp.co.sss.test_spring.repository.CategoryRepository;
 import jp.co.sss.test_spring.repository.ProductRepository;
 import jp.co.sss.test_spring.service.ProductService;
 import jp.co.sss.test_spring.service.SalesItemService;
@@ -33,6 +33,9 @@ public class ProductController {
     @Autowired
     private SalesItemService salesItemService;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public ProductController(ProductService service) {
         this.service = service;
     }
@@ -46,27 +49,27 @@ public class ProductController {
 
         for (SalesItem item : salesItems) {
             if (item.getProductId() != null && item.getDiscountRate() != null) {
-                Product product = service.findProductById(Long.valueOf(item.getProductId()));
+                Product product = service.findProductById(item.getProductId());
                 if (product != null && product.getPrice() != null) {
                     BigDecimal price = BigDecimal.valueOf(product.getPrice());
                     BigDecimal discountRate = item.getDiscountRate();
                     BigDecimal discountMultiplier = BigDecimal.ONE.subtract(discountRate.divide(BigDecimal.valueOf(100)));
                     BigDecimal discountedPrice = price.multiply(discountMultiplier);
                     item.setDiscountedPrice(discountedPrice);
-                    
                     item.setSalesImgPath(product.getImgPath());
-                    
                 }
             }
         }
 
         model.addAttribute("salesItems", salesItems);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "products/index";
     }
 
     @GetMapping("/new")
     public String newProductForm(Model model) {
         model.addAttribute("product", new Product());
+        model.addAttribute("categories", categoryRepository.findAll());
         return "products/new";
     }
 
@@ -103,10 +106,8 @@ public class ProductController {
         }
 
         model.addAttribute("saleItems", saleItems);
-
-        List<Review> reviews = service.findReviewsByProductId(id);
-        model.addAttribute("reviews", reviews);
-
+        model.addAttribute("reviews", service.findReviewsByProductId(id));
+        model.addAttribute("categories", categoryRepository.findAll());
         return "products/detail";
     }
 
@@ -134,7 +135,7 @@ public class ProductController {
 
         for (SalesItem item : salesItems) {
             if (item.getProductId() != null && item.getDiscountRate() != null) {
-                Product product = service.findProductById(Long.valueOf(item.getProductId()));
+                Product product = service.findProductById(item.getProductId());
                 if (product != null && product.getPrice() != null) {
                     BigDecimal price = BigDecimal.valueOf(product.getPrice());
                     BigDecimal discountRate = item.getDiscountRate();
@@ -147,7 +148,7 @@ public class ProductController {
 
         model.addAttribute("products", products);
         model.addAttribute("salesItems", salesItems);
-
+        model.addAttribute("categories", categoryRepository.findAll());
         return "products/search";
     }
 
@@ -155,6 +156,7 @@ public class ProductController {
     public String purchaseProduct(@PathVariable Long id, Model model) {
         Product product = service.findProductById(id);
         model.addAttribute("product", product);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "products/purchase";
     }
 }

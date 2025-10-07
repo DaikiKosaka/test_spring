@@ -31,10 +31,6 @@ public class Category {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parentCategory;
 
@@ -46,15 +42,7 @@ public class Category {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Override
-    public String toString() {
-        return "Category{" +
-                "categoryId=" + categoryId +
-                ", categoryName='" + categoryName + '\'' +
-                '}';
-    }
-
-    // ✅ Getter / Setter
+    // --- Getter / Setter ---
     public Long getCategoryId() {
         return categoryId;
     }
@@ -79,14 +67,6 @@ public class Category {
         this.description = description;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public Category getParentCategory() {
         return parentCategory;
     }
@@ -109,5 +89,13 @@ public class Category {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "categoryId=" + categoryId +
+                ", categoryName='" + categoryName + '\'' +
+                '}';
     }
 }
