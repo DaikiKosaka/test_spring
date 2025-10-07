@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 import jp.co.sss.test_spring.entity.Cart;
 import jp.co.sss.test_spring.entity.Product;
+import jp.co.sss.test_spring.repository.CategoryRepository;
 import jp.co.sss.test_spring.service.CartService;
 import jp.co.sss.test_spring.service.OrderService;
 import jp.co.sss.test_spring.service.ProductService;
@@ -35,6 +36,9 @@ public class CartController {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     public CartController(CartService cartService) {
@@ -57,6 +61,8 @@ public class CartController {
 
         model.addAttribute("cartProducts", cartList);
         model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("categories", categoryRepository.findAll());
+
 
         return "cart";
     }
@@ -92,6 +98,7 @@ public class CartController {
         }
         model.addAttribute("cartProducts", cartList);
         model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("categories", categoryRepository.findAll());
 
         return "cart/cart_detail";
     }
@@ -108,7 +115,6 @@ public class CartController {
                               HttpSession session,
                               Model model) {
 
-        // セッションから user_name を取得
         String userName = (String) session.getAttribute("user_name");
         if (userName == null) {
             userName = "未ログイン";
@@ -130,6 +136,7 @@ public class CartController {
             model.addAttribute("cartList", cartList);
             double total = cartService.calculateCartTotal(cartList);
             model.addAttribute("total", total);
+            model.addAttribute("categories", categoryRepository.findAll());
         }
 
         return "confirm";
@@ -159,6 +166,7 @@ public class CartController {
 
         model.addAttribute("cartProducts", cartList);
         model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("categories", categoryRepository.findAll());
 
         return "cart/complete";
     }
@@ -175,6 +183,7 @@ public class CartController {
 
         model.addAttribute("cartProducts", cartList);
         model.addAttribute("totalPrice", totalPrice);
+        model.addAttribute("categories", categoryRepository.findAll());
 
         return "cart/complete";
     }
@@ -189,6 +198,9 @@ public class CartController {
             @RequestParam(required = false) Integer quantity,
             HttpSession session,
             Model model) {
+    	
+    	model.addAttribute("categories", categoryRepository.findAll());
+
 
         session.setAttribute("name", name);
         session.setAttribute("address", address);

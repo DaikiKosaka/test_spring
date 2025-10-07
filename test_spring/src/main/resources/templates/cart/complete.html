@@ -36,7 +36,7 @@
             color: #007bff;
         }
 
-        .info p {
+        .info p, .info li {
             margin: 10px 0;
             font-size: 15px;
             color: #333;
@@ -52,31 +52,35 @@
             margin: 0 10px;
         }
 
-        button {
-            padding: 12px 24px;
+        .confirm-btn {
+            background-color: #28a745;
+            color: white;
+            font-size: 18px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .confirm-btn:hover {
+            background-color: #218838;
+        }
+
+        .edit-btn {
+            background-color: #dc3545;
+            color: white;
             font-size: 16px;
+            padding: 12px 24px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
         }
 
-        form:first-of-type button {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        form:first-of-type button:hover {
+        .edit-btn:hover {
             background-color: #c82333;
-        }
-
-        form:last-of-type button {
-            background-color: #007bff;
-            color: white;
-        }
-
-        form:last-of-type button:hover {
-            background-color: #0056b3;
         }
 
         .disabled-btn {
@@ -100,18 +104,33 @@
 
     <main>
         <h1>ご購入を確定しますか？</h1>
+        <p style="text-align:center; color:#555;">以下の内容をご確認のうえ、「購入を確定する」ボタンを押してください。</p>
 
         <div class="info">
             <h2>購入者情報</h2>
             <p>お名前：<span th:text="${name}">山田 太郎</span></p>
-            <p>住所：<span th:text="${address}">東京都港区</span></p>
-            <p>アパート名：<span th:text="${apartment}">サンシャインA-101</span></p>
+            <p>住所：<span th:text="${address}">札幌市北区拓北4条1丁目2-19</span></p>
+            <p>アパート名：<span th:text="${apartment}">だ</span></p>
             <p>支払い情報：<span th:text="${payment}">クレジットカード</span></p>
+            <h2>ご注文内容</h2>
+            <ul>
+                <li th:if="${product != null}">
+                    <span th:text="${product.productName}">商品名</span> × 
+                    <span th:text="${quantity}">数量</span>：
+                    <span th:text="${#numbers.formatDecimal(product.price * quantity, 0, 0)}">金額</span> 円
+                </li>
+                <li th:each="cart : ${cartProducts}">
+                    <span th:text="${cart.product.productName}">商品名</span> × 
+                    <span th:text="${cart.quantity}">数量</span>：
+                    <span th:text="${#numbers.formatDecimal(cart.product.price * cart.quantity, 0, 0)}">金額</span> 円
+                </li>
+            </ul>
+            <p><strong>合計金額：</strong> <span th:text="${#numbers.formatDecimal(totalPrice, 0, 0)}">0</span> 円</p>
         </div>
 
         <div class="actions">
             <form th:action="@{/cart/cart_detail}" method="get">
-                <button type="submit">編集する</button>
+                <button type="submit" class="edit-btn">編集する</button>
             </form>
 
             <form th:action="@{/order/orders/finalize}" method="post">
@@ -123,11 +142,17 @@
                 <input type="hidden" name="quantity" th:value="${quantity}" />
 
                 <button type="submit"
-                        th:disabled="${productId == null and (quantity == null or quantity == 0)}"
-                        th:classappend="${productId == null and (quantity == null or quantity == 0)} ? 'disabled-btn' : ''">
-                    購入確定
-                </button>
+        th:disabled="${#lists.isEmpty(cartProducts) and (productId == null or quantity == null or quantity == 0)}"
+        th:classappend="${#lists.isEmpty(cartProducts) and (productId == null or quantity == null or quantity == 0)} ? 'disabled-btn' : ''"
+        class="confirm-btn">
+    この内容で購入を確定する
+</button>
             </form>
+        </div>
+
+        <div th:if="${productId == null and (quantity == null or quantity == 0)}"
+             class="no-product-message">
+            カートに商品が入っていないようです。商品を選択してからご購入ください。
         </div>
     </main>
 

@@ -18,6 +18,7 @@ import jp.co.sss.test_spring.entity.Order;
 import jp.co.sss.test_spring.entity.OrderItem;
 import jp.co.sss.test_spring.entity.Product;
 import jp.co.sss.test_spring.entity.User;
+import jp.co.sss.test_spring.repository.CategoryRepository;
 import jp.co.sss.test_spring.repository.OrderRepository;
 import jp.co.sss.test_spring.repository.UserRepository;
 import jp.co.sss.test_spring.service.CartService;
@@ -33,6 +34,9 @@ public class OrderController {
 
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private OrderService orderService;
@@ -132,6 +136,8 @@ public class OrderController {
         model.addAttribute("items", items);
         model.addAttribute("imageUrls", imageUrls);
         model.addAttribute("payment", session.getAttribute("payment"));
+        model.addAttribute("categories", categoryRepository.findAll());
+
 
         return "orders/finished";
     }
