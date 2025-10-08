@@ -38,7 +38,7 @@
         input[type="password"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
@@ -46,8 +46,8 @@
 
         .error-message {
             color: red;
+            font-size: 13px;
             margin-bottom: 15px;
-            text-align: center;
         }
 
         button {
@@ -82,22 +82,27 @@
     <div class="container">
         <h1>新規登録</h1>
 
-        <div th:if="${errorMessage}" class="error-message">
+        <div th:if="${errorMessage}" class="error-message" style="text-align:center;">
             <p th:text="${errorMessage}"></p>
         </div>
 
-        <form th:action="@{/register}" method="post">
+        <form th:action="@{/register}" th:object="${user}" method="post">
+
             <label for="username">ユーザー名:</label>
-            <input type="text" id="username" name="username" required>
+            <input type="text" th:field="*{username}" maxlength="50" />
+            <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error-message"></div>
 
             <label for="email">メールアドレス:</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" th:field="*{email}" />
+            <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></div>
 
             <label for="password">パスワード:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" th:field="*{password}" />
+            <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></div>
 
             <label for="confirmPassword">パスワード（確認用）:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" required>
+            <input type="password" th:field="*{confirmPassword}" />
+            <div th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" class="error-message"></div>
 
             <button type="submit">登録</button>
         </form>
